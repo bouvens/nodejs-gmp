@@ -1,36 +1,21 @@
 {
-  "name": "typescript-backend-template",
+  "name": "node.js-learning",
   "version": "0.0.0",
-  "description": "A simple template for the nodejs project which includes typescript and jest",
-  "main": "index.js",
+  "description": "A simple Node.js learning project",
+  "main": "index.ts",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "start": "node index.js",
     "start:watch": "nodemon",
     "start:watch-debug": "nodemon --config nodemon-debug.json",
-    "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix",
+    "lint": "eslint src/**/*.{js,ts}",
+    "lint:fix": "eslint src/**/*.{js,ts} --fix",
     "tsc-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/datapain/typescript-backend-template.git"
-  },
-  "keywords": [
-    "template",
-    "typescript",
-    "nodejs",
-    "backend",
-    "bootstrap"
-  ],
-  "author": "Konstantin Tsepelev <strangeratthedoor@gmail.com> (https://github.com/datapain)",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/datapain/typescript-backend-template/issues"
-  },
   "devDependencies": {
     "@commitlint/cli": "^12.0.1",
     "@commitlint/config-conventional": "^12.0.1",
@@ -54,7 +39,6 @@
     "ts-node": "^9.1.1",
     "typescript": "~4.1.5"
   },
-  "homepage": "https://github.com/datapain/typescript-backend-template#readme",
   "jest": {
     "moduleFileExtensions": [
       "js",
