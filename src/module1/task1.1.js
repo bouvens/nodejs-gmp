@@ -1,16 +1,21 @@
-import readline from 'readline';
+import { Transform } from 'stream';
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-  terminal: false,
-});
+class ReverseTransform extends Transform {
+  _transform(chunk, encoding, callback) {
+    try {
+      const line = chunk.toString().replace(/\n$/, '');
+      const length = line.length - 1;
+      const reversed = line
+        .split('')
+        .map((letter, index, line) => line[length - index])
+        .join('');
+      callback(null, `${reversed}\n`);
+    } catch (error) {
+      callback(error);
+    }
+  }
+}
 
-rl.on('line', (input) => {
-  const length = input.length - 1;
-  const output = input
-    .split('')
-    .map((letter, index, line) => line[length - index])
-    .join('');
-  rl.output.write(`${output}\n`);
-});
+const reverse = new ReverseTransform();
+
+process.stdin.pipe(reverse).pipe(process.stdout);
