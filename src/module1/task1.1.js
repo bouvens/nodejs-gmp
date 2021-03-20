@@ -4,10 +4,10 @@ class ReverseTransform extends Transform {
   _transform(chunk, encoding, callback) {
     try {
       const line = chunk.toString().replace(/\n$/, '');
-      const length = line.length - 1;
+      const lastIndex = line.length - 1;
       const reversed = line
         .split('')
-        .map((letter, index, line) => line[length - index])
+        .map((letter, index, line) => line[lastIndex - index])
         .join('');
       callback(null, `${reversed}\n`);
     } catch (error) {
