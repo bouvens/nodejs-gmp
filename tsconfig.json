@@ -19,10 +19,6 @@
     ],
     "module": "commonjs",
     "baseUrl": "./src",
-    "typeRoots": [
-      "src/types",
-      "node_modules/@types"
-    ],
     "allowSyntheticDefaultImports": true
   },
   "exclude": [
