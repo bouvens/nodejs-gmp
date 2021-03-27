@@ -15,28 +15,31 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.param('id', (req, res, next, id) => {
+  const user = getUserById(id);
+  if (user) {
+    req.user = user;
+    next();
+  } else {
+    const message = `No users with id: ${id}`;
+    res.status(404).json({ message });
+    next(Error(message));
+  }
+});
+
 app.get('/', (req, res) => {
   res.json({ status: 'OK' });
 });
 
 app.get('/user/:id', (req, res) => {
-  const userId = req.params.id;
-  const user = getUserById(userId);
-  if (user) {
-    res.json({ user });
-  } else {
-    res.status(404).json({ message: `No users with id: ${userId}` });
-  }
+  const { user } = req;
+  res.json({ user });
 });
 
 app.delete('/user/:id', (req, res) => {
-  const userId = req.params.id;
-  const deletion = softDeleteUser(userId);
-  if (deletion) {
-    res.json({ message: `Deleted successfully: ${userId}` });
-  } else {
-    res.status(404).json({ message: `No users with id: ${userId}` });
-  }
+  const { user } = req;
+  softDeleteUser(user);
+  res.json({ message: `Deleted successfully: ${user.id}` });
 });
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

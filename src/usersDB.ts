@@ -47,17 +47,21 @@ const findUser = (id: string): null | User => {
 
 export const getUserById = (id: string): null | User => {
   const selectedUser = findUser(id);
-  if (selectedUser.isDeleted) {
+  if (selectedUser?.isDeleted) {
     return null;
   }
   return selectedUser;
 };
 
-export const softDeleteUser = (id: string): boolean => {
+export const softDeleteById = (id: string): boolean => {
   const selectedUser = findUser(id);
   if (selectedUser) {
     selectedUser.isDeleted = true;
     return true;
   }
   return false;
+};
+
+export const softDeleteUser = (selectedUser: User): void => {
+  selectedUser.isDeleted = true;
 };
