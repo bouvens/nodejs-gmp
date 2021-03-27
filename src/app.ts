@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
   res.json({ status: 'OK' });
 });
 
-app.use('/user', routers.user);
+app.use('/api', routers.api);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
