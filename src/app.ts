@@ -1,5 +1,5 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
-import { getUserById, softDeleteUser } from './usersDB';
+import * as routers from './routers';
 
 const PORT = process.env.PORT || 3000;
 
@@ -15,32 +15,11 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.param('id', (req, res, next, id) => {
-  const user = getUserById(id);
-  if (user) {
-    req.user = user;
-    next();
-  } else {
-    const message = `No users with id: ${id}`;
-    res.status(404).json({ message });
-    next(Error(message));
-  }
-});
-
 app.get('/', (req, res) => {
   res.json({ status: 'OK' });
 });
 
-app.get('/user/:id', (req, res) => {
-  const { user } = req;
-  res.json({ user });
-});
-
-app.delete('/user/:id', (req, res) => {
-  const { user } = req;
-  softDeleteUser(user);
-  res.json({ message: `Deleted successfully: ${user.id}` });
-});
+app.use('/user', routers.user);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
