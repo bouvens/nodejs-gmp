@@ -9,9 +9,8 @@ router.param('id', (req, res, next, id) => {
     req.user = user;
     next();
   } else {
-    const message = `No users with id: ${id}`;
-    res.status(404).json({ message });
-    next(Error(message));
+    const error = `No users with id: ${id}`;
+    res.status(404).json({ error });
   }
 });
 
