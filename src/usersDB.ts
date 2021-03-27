@@ -26,7 +26,7 @@ const users: User[] = [
     id: 'dab7613c-0e9a-4b94-8f74-29a11ddb7d29',
     login: 'default',
     password: 'f1d2d04f695a4fb598',
-    age: 30,
+    age: 35,
     isDeleted: false,
   },
 ];
@@ -51,15 +51,6 @@ export const getUserById = (id: string): null | User => {
     return null;
   }
   return selectedUser;
-};
-
-export const softDeleteById = (id: string): boolean => {
-  const selectedUser = findUser(id);
-  if (selectedUser) {
-    selectedUser.isDeleted = true;
-    return true;
-  }
-  return false;
 };
 
 export const softDeleteUser = (selectedUser: User): void => {
