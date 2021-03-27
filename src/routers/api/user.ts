@@ -1,5 +1,5 @@
 import express from 'express';
-import { getUserById, softDeleteUser } from '../usersDB';
+import { getUserById, softDeleteUser } from '../../usersDB';
 
 const router = express.Router();
 
@@ -20,6 +20,17 @@ router.get('/:id', (req, res) => {
   res.json({ user });
 });
 
+// Create
+
+// Read
+router.get('/:id', (req, res) => {
+  const { user } = req;
+  res.json({ user });
+});
+
+// Update
+
+// Delete
 router.delete('/:id', (req, res) => {
   const { user } = req;
   softDeleteUser(user);
