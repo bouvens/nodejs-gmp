@@ -16,14 +16,14 @@ const users: User[] = [
     isDeleted: false,
   },
   {
-    id: '033c55e3-9224-47e0-9f1d-5f1cc6bc65d1',
+    id: 'e31bb796-d77c-4043-9502-7ed70864f546',
     login: 'test1',
     password: 'qwerty1',
     age: 25,
     isDeleted: false,
   },
   {
-    id: '033c55e3-9224-47e0-9f1d-5f1cc6bc65d1',
+    id: '03953855-98c1-4c9d-b389-a2eb460ac9f6',
     login: 'test3test',
     password: 'qwerty3qwerty',
     age: 23,
