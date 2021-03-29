@@ -66,7 +66,7 @@ router.post('/', (req, res) => {
 // Read
 router.get('/:id', (req, res) => {
   const { user } = req;
-  res.json({ user });
+  res.json(user);
 });
 
 // Update
