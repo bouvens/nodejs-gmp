@@ -1,5 +1,6 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import * as routers from './routers';
+import { ExpressError } from './helpers/Error';
 
 const PORT = process.env.PORT || 3000;
 
@@ -21,8 +22,11 @@ app.get('/', (req, res) => {
 
 app.use('/api', routers.api);
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 500 });
-  next(err);
+app.use((err: Error | ExpressError, req: Request, res: Response, _next: NextFunction) => {
+  if ('expose' in err && err.expose) {
+    res.status(err.statusCode).json({ error: err.message, details: err.details });
+  } else {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
