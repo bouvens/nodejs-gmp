@@ -1,4 +1,5 @@
 import { User } from '../types';
+import user from '../routers/api/user';
 
 const users: User[] = [
   {
@@ -45,4 +46,43 @@ const users: User[] = [
   },
 ];
 
-export const getUsers = (): User[] => users;
+const getAll = (): User[] => users;
+
+export function add(user: User): void {
+  users.push(user);
+}
+
+export function find(id: User['id']): null | User {
+  const selectedUser = getAll().filter((user) => user.id === id);
+  const { length } = selectedUser;
+
+  if (length > 1) {
+    throw Error(`ID duplications: ${id}`);
+  }
+
+  if (length === 0) {
+    return null;
+  }
+
+  return selectedUser[0];
+}
+
+export const findByLogin = (loginSubstring: string): User[] =>
+  getAll().filter((user) => user.login.indexOf(loginSubstring) !== -1);
+
+const findIndex = (id: User['id']): number => getAll().findIndex((user) => user.id === id);
+
+export function update(updates: Partial<User>): null | User {
+  const index = findIndex(updates.id);
+  if (index === -1) {
+    return null;
+  }
+
+  const allUsers = getAll();
+  const newUser = {
+    ...allUsers[index],
+    ...updates,
+  };
+  allUsers[index] = newUser;
+  return newUser;
+}
