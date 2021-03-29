@@ -1,5 +1,6 @@
 import express from 'express';
 import { getAutoSuggestUsers, getUserById, softDeleteUser } from '../../db/usersHandlers';
+import { ExpressError } from '../../helpers/Error';
 
 const router = express.Router();
 
@@ -9,8 +10,7 @@ router.param('id', (req, res, next, id) => {
     req.user = user;
     next();
   } else {
-    const error = `No users with id: ${id}`;
-    res.status(404).json({ error });
+    next(new ExpressError(`No users with id: ${id}`, 404));
   }
 });
 
@@ -32,7 +32,7 @@ router.get(
     }
 
     if (errors.length) {
-      res.status(400).json({ errors });
+      next(new ExpressError('Incorrect query parameters', 400, errors));
     } else {
       req.autoSuggest = { login: parsedLogin, limit: parsedLimit };
       next();
