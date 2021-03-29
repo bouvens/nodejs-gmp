@@ -1,5 +1,11 @@
 import express from 'express';
-import { getAutoSuggestUsers, getUserById, softDeleteUser } from '../../db/usersHandlers';
+import {
+  createUser,
+  getAutoSuggestUsers,
+  getUserById,
+  softDeleteUser,
+  updateUser,
+} from '../../db/usersHandlers';
 import { ExpressError } from '../../helpers/Error';
 
 const router = express.Router();
@@ -45,6 +51,17 @@ router.get(
 );
 
 // Create
+router.post('/', (req, res) => {
+  const { login: rawLogin, password: rawPassword, age: rawAge } = req.body;
+
+  // TODO replace with validation
+  const login = String(rawLogin);
+  const password = String(rawPassword);
+  const age = Number(rawAge);
+
+  const id = createUser({ login, password, age });
+  res.json({ id });
+});
 
 // Read
 router.get('/:id', (req, res) => {
@@ -53,11 +70,23 @@ router.get('/:id', (req, res) => {
 });
 
 // Update
+router.put('/:id', (req, res) => {
+  const { id } = req.user;
+  const { login: rawLogin, password: rawPassword, age: rawAge } = req.body;
+
+  // TODO replace with validation
+  const login = rawLogin && String(rawLogin);
+  const password = rawPassword && String(rawPassword);
+  const age = rawAge && Number(rawAge);
+
+  const user = updateUser(id, { login, password, age });
+  res.json(user);
+});
 
 // Delete
 router.delete('/:id', (req, res) => {
   const { user } = req;
-  softDeleteUser(user);
+  softDeleteUser(user.id);
   res.json({ message: `Deleted successfully: ${user.id}` });
 });
 

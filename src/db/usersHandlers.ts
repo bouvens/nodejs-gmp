@@ -1,23 +1,20 @@
+import { v4 as uuid } from 'uuid';
 import { User } from '../types';
-import { getUsers } from './usersDB';
+import * as db from './usersDB';
 
-function findUser(id: string): null | User {
-  const selectedUser = getUsers().filter((user) => user.id === id);
-  const { length } = selectedUser;
-
-  if (length > 1) {
-    throw Error(`ID duplications: ${id}`);
-  }
-
-  if (length === 0) {
-    return null;
-  }
-
-  return selectedUser[0];
+export function createUser({
+  login,
+  password,
+  age,
+}: Pick<User, 'login' | 'password' | 'age'>): User['id'] {
+  const id = uuid();
+  const user: User = { id, login, password, age, isDeleted: false };
+  db.add(user);
+  return id;
 }
 
 export function getAutoSuggestUsers(loginSubstring: string, limit: number): User[] {
-  const filteredUsers = getUsers().filter((user) => user.login.indexOf(loginSubstring) !== -1);
+  const filteredUsers = db.findByLogin(loginSubstring).filter((user) => !user.isDeleted);
 
   if (filteredUsers.length > limit) {
     filteredUsers.length = limit;
@@ -28,8 +25,8 @@ export function getAutoSuggestUsers(loginSubstring: string, limit: number): User
   return filteredUsers;
 }
 
-export function getUserById(id: string): null | User {
-  const selectedUser = findUser(id);
+export function getUserById(id: User['id']): null | User {
+  const selectedUser = db.find(id);
 
   if (selectedUser?.isDeleted) {
     return null;
@@ -38,6 +35,13 @@ export function getUserById(id: string): null | User {
   return selectedUser;
 }
 
-export function softDeleteUser(selectedUser: User): void {
-  selectedUser.isDeleted = true;
+export function updateUser(id: User['id'], updates: Partial<User>): User {
+  const filteredUpdates = Object.fromEntries(
+    Object.entries(updates).filter(([, value]) => value !== undefined),
+  );
+  return db.update({ id, ...filteredUpdates });
+}
+
+export function softDeleteUser(id: User['id']): void {
+  updateUser(id, { isDeleted: true });
 }
