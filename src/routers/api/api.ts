@@ -5,6 +5,4 @@ const router = express.Router();
 
 router.use('/user', user);
 
-// TODO router.all('/user/*', requireAuthentication);
-
 export default router;
