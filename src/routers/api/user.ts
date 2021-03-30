@@ -7,6 +7,7 @@ import {
   updateUser,
 } from '../../db/usersHandlers';
 import { ExpressError } from '../../helpers/Error';
+import { userValidator, ValidatedUserRequest } from './user.schema';
 
 const router = express.Router();
 
@@ -51,14 +52,8 @@ router.get(
 );
 
 // Create
-router.post('/', (req, res) => {
-  const { login: rawLogin, password: rawPassword, age: rawAge } = req.body;
-
-  // TODO replace with validation
-  const login = String(rawLogin);
-  const password = String(rawPassword);
-  const age = Number(rawAge);
-
+router.post('/', userValidator, (req: ValidatedUserRequest, res) => {
+  const { login, password, age } = req.body;
   const id = createUser({ login, password, age });
   res.json({ id });
 });
@@ -70,15 +65,9 @@ router.get('/:id', (req, res) => {
 });
 
 // Update
-router.put('/:id', (req, res) => {
+router.put('/:id', userValidator, (req: ValidatedUserRequest, res) => {
   const { id } = req.user;
-  const { login: rawLogin, password: rawPassword, age: rawAge } = req.body;
-
-  // TODO replace with validation
-  const login = rawLogin && String(rawLogin);
-  const password = rawPassword && String(rawPassword);
-  const age = rawAge && Number(rawAge);
-
+  const { login, password, age } = req.body;
   const user = updateUser(id, { login, password, age });
   res.json(user);
 });
