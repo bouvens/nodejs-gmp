@@ -35,13 +35,10 @@ export function getUserById(id: User['id']): null | User {
   return selectedUser;
 }
 
-export function updateUser(id: User['id'], updates: Partial<User>): User {
-  const filteredUpdates = Object.fromEntries(
-    Object.entries(updates).filter(([, value]) => value !== undefined),
-  );
-  return db.update({ id, ...filteredUpdates });
+export function updateUser(id: User['id'], updates: Omit<User, 'id' | 'isDeleted'>): User {
+  return db.update({ id, ...updates });
 }
 
 export function softDeleteUser(id: User['id']): void {
-  updateUser(id, { isDeleted: true });
+  db.update({ id, isDeleted: true });
 }
