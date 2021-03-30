@@ -55,7 +55,7 @@ router.get(
 router.post('/', userValidator, (req: ValidatedUserRequest, res) => {
   const { login, password, age } = req.body;
   const id = createUser({ login, password, age });
-  res.json({ id });
+  res.status(201).set('Location', `${req.originalUrl}/${id}`).json({ id });
 });
 
 // Read
