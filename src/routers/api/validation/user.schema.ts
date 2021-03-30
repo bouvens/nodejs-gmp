@@ -1,16 +1,10 @@
-import {
-  ContainerTypes,
-  createValidator,
-  ValidatedRequest,
-  ValidatedRequestSchema,
-} from 'express-joi-validation';
 import * as Joi from 'joi';
+import { ContainerTypes, ValidatedRequest, ValidatedRequestSchema } from 'express-joi-validation';
+import { validator } from './common';
 
 const LETTERS_WITH_NUMBERS = new RegExp('^(\\d+[A-z]|[A-z]+\\d)[A-z\\d]*$');
 
-const validator = createValidator();
-
-const userSchema = Joi.object({
+const schema = Joi.object({
   login: Joi.string().required(),
   password: Joi.string()
     .pattern(LETTERS_WITH_NUMBERS)
@@ -19,7 +13,7 @@ const userSchema = Joi.object({
   age: Joi.number().integer().min(4).max(130).required(),
 });
 
-export interface UserRequestSchema extends ValidatedRequestSchema {
+interface RequestSchema extends ValidatedRequestSchema {
   [ContainerTypes.Body]: {
     login: string;
     password: string;
@@ -27,5 +21,7 @@ export interface UserRequestSchema extends ValidatedRequestSchema {
   };
 }
 
-export const userValidator = validator.body(userSchema);
-export type ValidatedUserRequest = ValidatedRequest<UserRequestSchema>;
+type BodyValidatedRequest = ValidatedRequest<RequestSchema>;
+const bodyValidator = validator.body(schema);
+
+export { BodyValidatedRequest as ValidatedRequest, bodyValidator as validator };
