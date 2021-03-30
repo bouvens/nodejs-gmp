@@ -1,12 +1,8 @@
 import { v4 as uuid } from 'uuid';
-import { User } from '../types';
+import { OpenUserProps, User } from '../types';
 import * as db from './usersDB';
 
-export function createUser({
-  login,
-  password,
-  age,
-}: Pick<User, 'login' | 'password' | 'age'>): User['id'] {
+export function createUser({ login, password, age }: OpenUserProps): User['id'] {
   const id = uuid();
   const user: User = { id, login, password, age, isDeleted: false };
   db.add(user);
@@ -35,7 +31,7 @@ export function getUserById(id: User['id']): null | User {
   return selectedUser;
 }
 
-export function updateUser(id: User['id'], updates: Omit<User, 'id' | 'isDeleted'>): User {
+export function updateUser(id: User['id'], updates: OpenUserProps): User {
   return db.update({ id, ...updates });
 }
 
