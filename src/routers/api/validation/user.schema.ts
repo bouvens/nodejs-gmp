@@ -14,11 +14,7 @@ const schema = Joi.object({
 });
 
 interface RequestSchema extends ValidatedRequestSchema {
-  [ContainerTypes.Body]: {
-    login: string;
-    password: string;
-    age: number;
-  };
+  [ContainerTypes.Body]: Joi.extractType<typeof schema>;
 }
 
 type BodyValidatedRequest = ValidatedRequest<RequestSchema>;

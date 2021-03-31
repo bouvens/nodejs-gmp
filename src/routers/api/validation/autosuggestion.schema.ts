@@ -8,10 +8,7 @@ const schema = Joi.object({
 });
 
 interface RequestSchema extends ValidatedRequestSchema {
-  [ContainerTypes.Query]: {
-    login: string;
-    limit: number;
-  };
+  [ContainerTypes.Query]: Joi.extractType<typeof schema>;
 }
 
 type QueryValidatedRequest = ValidatedRequest<RequestSchema>;
