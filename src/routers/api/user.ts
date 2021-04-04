@@ -1,19 +1,15 @@
 import express from 'express';
-import {
-  createUser,
-  getAutoSuggestUsers,
-  getUserById,
-  softDeleteUser,
-  updateUser,
-} from '../../services/usersService';
 import { AppError, ErrorStatus } from '../../services/Error';
+import UsersService from '../../services/UsersService';
+import { UsersModel } from '../../models/usersModel';
 import { autosuggestion, user } from './validation';
 
 const router = express.Router();
+const userService = new UsersService(UsersModel);
 
 router.param('id', async (req, res, next, id) => {
   try {
-    const user = await getUserById(id);
+    const user = await userService.getUserById(id);
     if (user) {
       req.user = user;
       next();
@@ -32,7 +28,7 @@ router.get(
   async (req: autosuggestion.ValidatedRequest, res, next) => {
     try {
       const { login, limit } = req.query;
-      const users = await getAutoSuggestUsers(login, limit);
+      const users = await userService.getAutoSuggestUsers(login, limit);
       res.json(users);
     } catch (e) {
       next(e);
@@ -44,7 +40,7 @@ router.get(
 router.post('/', user.validator, async (req: user.ValidatedRequest, res, next) => {
   try {
     const { login, password, age } = req.body;
-    const id = await createUser({ login, password, age });
+    const id = await userService.createUser({ login, password, age });
     res.status(201).set('Location', `${req.originalUrl}/${id}`).json({ id });
   } catch (e) {
     next(e);
@@ -62,7 +58,7 @@ router.put('/:id', user.validator, async (req: user.ValidatedRequest, res, next)
   try {
     const { id } = req.user;
     const { login, password, age } = req.body;
-    const user = await updateUser(id, { login, password, age });
+    const user = await userService.updateUser(id, { login, password, age });
     res.json(user);
   } catch (e) {
     next(e);
@@ -73,7 +69,7 @@ router.put('/:id', user.validator, async (req: user.ValidatedRequest, res, next)
 router.delete('/:id', async (req, res, next) => {
   try {
     const { user } = req;
-    await softDeleteUser(user.id);
+    await userService.softDeleteUser(user.id);
     res.json({ message: `Deleted successfully: ${user.id}` });
   } catch (e) {
     next(e);
