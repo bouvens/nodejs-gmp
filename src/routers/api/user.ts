@@ -6,7 +6,7 @@ import {
   softDeleteUser,
   updateUser,
 } from '../../db/usersHandlers';
-import { ExpressError } from '../../helpers/Error';
+import { AppError, ErrorStatus } from '../../helpers/Error';
 import { autosuggestion, user } from './validation';
 
 const router = express.Router();
@@ -17,7 +17,7 @@ router.param('id', (req, res, next, id) => {
     req.user = user;
     next();
   } else {
-    next(new ExpressError(`No users with id: ${id}`, 404));
+    next(new AppError(`No users with id: ${id}`, ErrorStatus.notFound));
   }
 });
 

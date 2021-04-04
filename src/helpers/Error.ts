@@ -1,12 +1,17 @@
-export class ExpressError extends Error {
-  statusCode: number;
+export enum ErrorStatus {
+  internal,
+  notFound,
+}
+
+export class AppError extends Error {
+  status: ErrorStatus;
   expose: boolean;
   details?: string[];
 
-  constructor(message: string, statusCode: number, details?: string[], expose?: boolean) {
+  constructor(message: string, status: ErrorStatus, details?: string[], expose?: boolean) {
     super(message);
-    this.statusCode = statusCode;
+    this.status = status;
     this.details = details;
-    this.expose = expose ?? statusCode < 500;
+    this.expose = expose ?? status !== ErrorStatus.internal;
   }
 }
