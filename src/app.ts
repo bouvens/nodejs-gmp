@@ -1,8 +1,13 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
-import * as routers from './routers';
-import { ExpressError } from './helpers/Error';
+import routers from './routers';
+import { AppError, ErrorStatus } from './helpers/Error';
 
 const PORT = process.env.PORT || 3000;
+
+const httpCodeByErrorStatus: Record<ErrorStatus, number> = {
+  [ErrorStatus.internal]: 500,
+  [ErrorStatus.notFound]: 404,
+};
 
 const app: Express = express();
 app.listen(PORT, () => {
@@ -16,15 +21,13 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.get('/', (req, res) => {
-  res.json({ status: 'OK' });
-});
+app.use('/', routers);
 
-app.use('/api', routers.api);
-
-app.use((err: Error | ExpressError, req: Request, res: Response, _next: NextFunction) => {
+app.use((err: Error | AppError, req: Request, res: Response, _next: NextFunction) => {
   if ('expose' in err && err.expose) {
-    res.status(err.statusCode).json({ error: err.message, details: err.details });
+    res
+      .status(httpCodeByErrorStatus[err.status])
+      .json({ error: err.message, details: err.details });
   } else {
     console.error(err.stack);
     res.status(500).json({ error: 'Server error' });
