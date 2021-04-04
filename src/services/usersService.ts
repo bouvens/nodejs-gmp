@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { OpenUserProps, User } from '../types';
-import * as db from './usersDB';
+import * as db from '../data-access/usersDB';
 
 export function createUser({ login, password, age }: OpenUserProps): User['id'] {
   const id = uuid();

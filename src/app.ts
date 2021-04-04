@@ -1,6 +1,6 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import routers from './routers';
-import { AppError, ErrorStatus } from './helpers/Error';
+import { AppError, ErrorStatus } from './services/Error';
 
 const PORT = process.env.PORT || 3000;
 

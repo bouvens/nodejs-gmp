@@ -1,5 +1,4 @@
 import { User } from '../types';
-import user from '../routers/api/user';
 
 const users: User[] = [
   {
