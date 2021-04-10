@@ -52,18 +52,7 @@ export function add(user: User): void {
 }
 
 export function find(id: User['id']): null | User {
-  const selectedUser = getAll().filter((user) => user.id === id);
-  const { length } = selectedUser;
-
-  if (length > 1) {
-    throw Error(`ID duplications: ${id}`);
-  }
-
-  if (length === 0) {
-    return null;
-  }
-
-  return selectedUser[0];
+  return getAll().find((user) => user.id === id);
 }
 
 export const findByLogin = (loginSubstring: string): User[] =>
