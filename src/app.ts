@@ -1,7 +1,7 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import config from './config';
 import routers from './routers';
-import { AppError, ErrorStatus } from './services/Error';
+import { AppError, ErrorStatus } from './services/ErrorService';
 
 const httpCodeByErrorStatus: Record<ErrorStatus, number> = {
   [ErrorStatus.internal]: 500,

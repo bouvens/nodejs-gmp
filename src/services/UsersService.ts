@@ -1,5 +1,5 @@
 import { OpenUserProps, User } from '../types';
-import { IUserModel } from '../models/usersModel';
+import { IUserModel } from '../models/UsersModel';
 
 export default class UsersService {
   constructor(private UserModel: IUserModel) {}
