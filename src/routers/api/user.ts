@@ -1,7 +1,7 @@
 import express from 'express';
-import { AppError, ErrorStatus } from '../../services/Error';
+import { AppError, ErrorStatus } from '../../services/ErrorService';
 import UsersService from '../../services/UsersService';
-import { UsersModel } from '../../models/usersModel';
+import { UsersModel } from '../../models/UsersModel';
 import { autosuggestion, user } from './validation';
 
 const router = express.Router();
