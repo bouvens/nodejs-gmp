@@ -9,15 +9,8 @@ export default class UsersService {
   }
 
   async getAutoSuggestUsers(loginSubstring: string, limit: number): Promise<User[]> {
-    const filteredUsers = await this.UserModel.findByLogin(loginSubstring);
-
-    if (filteredUsers.length > limit) {
-      filteredUsers.length = limit;
-    }
-
-    filteredUsers.sort((user1, user2) => (user1.login < user2.login ? -1 : 1));
-
-    return filteredUsers;
+    const users = await this.UserModel.findByLogin(loginSubstring, limit);
+    return users || [];
   }
 
   async getUserById(id: User['id']): Promise<null | User> {
