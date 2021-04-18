@@ -1,8 +1,7 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
+import config from './config';
 import routers from './routers';
 import { AppError, ErrorStatus } from './services/Error';
-
-const PORT = process.env.PORT || 3000;
 
 const httpCodeByErrorStatus: Record<ErrorStatus, number> = {
   [ErrorStatus.internal]: 500,
@@ -10,8 +9,8 @@ const httpCodeByErrorStatus: Record<ErrorStatus, number> = {
 };
 
 const app: Express = express();
-app.listen(PORT, () => {
-  console.log(`Server is running at ${PORT}`);
+app.listen(config.port, () => {
+  console.log(`Server is running at ${config.port}`);
 });
 
 app.use(express.json());
