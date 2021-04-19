@@ -1,4 +1,4 @@
-type Includes<T, U extends T> = U;
+import { Includes } from './common';
 
 export type User = {
   id: string;

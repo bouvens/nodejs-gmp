@@ -1,7 +1,8 @@
 import { v4 as uuid } from 'uuid';
+import { BOOLEAN, NUMBER, STRING, UUIDV4, Op } from 'sequelize';
 import { OpenUserProps, User } from '../types';
-import { BOOLEAN, NUMBER, STRING, UUIDV4, Op, Model } from 'sequelize';
-import { sequelize } from '../data-access/usersDB';
+import { sequelize } from '../data-access/postgresql';
+import { getPlain } from './common';
 
 const User = sequelize.define(
   'user',
@@ -18,9 +19,7 @@ const User = sequelize.define(
   },
 );
 
-const getPlain = <T>(item: Model<T>): T => item.get({ plain: true });
-
-export class UsersModel {
+export class UserModel {
   static async add({ login, password, age }: OpenUserProps): Promise<User['id']> {
     const id = uuid();
     await User.create({ id, login, password, age, isDeleted: false });
@@ -50,9 +49,9 @@ export class UsersModel {
       .catch(console.error);
   }
 
-  static async delete(id: User['id']): Promise<User> {
+  static async softDelete(id: User['id']): Promise<User> {
     return this.update(id, { isDeleted: true });
   }
 }
 
-export type IUserModel = typeof UsersModel;
+export type IUserModel = typeof UserModel;
