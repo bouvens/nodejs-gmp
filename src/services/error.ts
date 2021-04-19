@@ -1,6 +1,7 @@
 export enum ErrorStatus {
   internal,
   notFound,
+  other,
 }
 
 export class AppError extends Error {

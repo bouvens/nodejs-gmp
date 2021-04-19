@@ -1,6 +1,5 @@
 import Joi from 'joi';
-import { ContainerTypes, ValidatedRequest, ValidatedRequestSchema } from 'express-joi-validation';
-import { validator } from './common';
+import { BodyValidatedRequest, validator } from './common';
 
 const LETTERS_WITH_NUMBERS = new RegExp('^(\\d+[A-z]|[A-z]+\\d)[A-z\\d]*$');
 
@@ -13,11 +12,7 @@ const schema = Joi.object({
   age: Joi.number().integer().min(4).max(130).required(),
 });
 
-interface RequestSchema extends ValidatedRequestSchema {
-  [ContainerTypes.Body]: Joi.extractType<typeof schema>;
-}
-
-type BodyValidatedRequest = ValidatedRequest<RequestSchema>;
 const bodyValidator = validator.body(schema);
+type ValidatedRequest = BodyValidatedRequest<typeof schema>;
 
-export { BodyValidatedRequest as ValidatedRequest, bodyValidator as validator };
+export { ValidatedRequest, bodyValidator as validator };

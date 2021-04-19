@@ -1,15 +1,15 @@
 import express from 'express';
-import { AppError, ErrorStatus } from '../../services/ErrorService';
-import UsersService from '../../services/UsersService';
-import { UsersModel } from '../../models/UsersModel';
-import { autosuggestion, user } from './validation';
+import { AppError, ErrorStatus } from '../../services/error';
+import UserService from '../../services/user';
+import { UserModel } from '../../models/user';
+import { userAutosuggestion, user } from './validation';
 
 const router = express.Router();
-const userService = new UsersService(UsersModel);
+const userService = new UserService(UserModel);
 
 router.param('id', async (req, res, next, id) => {
   try {
-    const user = await userService.getUserById(id);
+    const user = await userService.getById(id);
     if (user) {
       req.user = user;
       next();
@@ -24,11 +24,11 @@ router.param('id', async (req, res, next, id) => {
 // Autosuggestion
 router.get(
   '/',
-  autosuggestion.validator,
-  async (req: autosuggestion.ValidatedRequest, res, next) => {
+  userAutosuggestion.validator,
+  async (req: userAutosuggestion.ValidatedRequest, res, next) => {
     try {
       const { login, limit } = req.query;
-      const users = await userService.getAutoSuggestUsers(login, limit);
+      const users = await userService.getAutoSuggest(login, limit);
       res.json(users);
     } catch (e) {
       next(e);
@@ -40,7 +40,7 @@ router.get(
 router.post('/', user.validator, async (req: user.ValidatedRequest, res, next) => {
   try {
     const { login, password, age } = req.body;
-    const id = await userService.createUser({ login, password, age });
+    const id = await userService.create({ login, password, age });
     res.status(201).set('Location', `${req.originalUrl}/${id}`).json({ id });
   } catch (e) {
     next(e);
@@ -58,7 +58,7 @@ router.put('/:id', user.validator, async (req: user.ValidatedRequest, res, next)
   try {
     const { id } = req.user;
     const { login, password, age } = req.body;
-    const user = await userService.updateUser(id, { login, password, age });
+    const user = await userService.update(id, { login, password, age });
     res.json(user);
   } catch (e) {
     next(e);
@@ -69,8 +69,11 @@ router.put('/:id', user.validator, async (req: user.ValidatedRequest, res, next)
 router.delete('/:id', async (req, res, next) => {
   try {
     const { user } = req;
-    await userService.softDeleteUser(user.id);
-    res.json({ message: `Deleted successfully: ${user.id}` });
+    if (await userService.delete(user.id)) {
+      res.json({ message: `Deleted successfully: ${user.id}` });
+    } else {
+      next(new AppError("Can't delete", ErrorStatus.other));
+    }
   } catch (e) {
     next(e);
   }
