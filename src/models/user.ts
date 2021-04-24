@@ -1,8 +1,8 @@
-import { v4 as uuid } from 'uuid';
 import { BOOLEAN, NUMBER, STRING, UUIDV4, Op } from 'sequelize';
-import { OpenUserProps, User } from '../types';
+import { OpenUserProps, IUser } from '../types';
 import { sequelize } from '../data-access/postgresql';
-import { getPlain } from './common';
+import { getPlainAndFiltered } from './common';
+import { CrudModel } from './crud';
 
 const User = sequelize.define(
   'user',
@@ -19,39 +19,17 @@ const User = sequelize.define(
   },
 );
 
-export class UserModel {
-  static async add({ login, password, age }: OpenUserProps): Promise<User['id']> {
-    const id = uuid();
-    await User.create({ id, login, password, age, isDeleted: false });
-    return id;
-  }
-
-  static async findById(id: User['id']): Promise<User> {
-    return User.findOne({ where: { id, isDeleted: false } })
-      .then(getPlain)
+export class UserModel extends CrudModel<OpenUserProps> {
+  async findByLogin(loginSubstring: string, limit: number): Promise<IUser[] | void> {
+    return this.sequelizeModel
+      .findAll({
+        where: { login: { [Op.like]: `%${loginSubstring}%` }, isDeleted: false },
+        limit,
+        order: ['login'],
+      })
+      .then((users) => users.map(getPlainAndFiltered))
       .catch(console.error);
-  }
-
-  static async findByLogin(loginSubstring: string, limit: number): Promise<User[] | void> {
-    return User.findAll({
-      where: { login: { [Op.like]: `%${loginSubstring}%` }, isDeleted: false },
-      limit,
-      order: ['login'],
-    })
-      .then((users) => users.map(getPlain))
-      .catch(console.error);
-  }
-
-  static async update(id: User['id'], updates: Partial<User>): Promise<User> {
-    return User.findOne({ where: { id, isDeleted: false } })
-      .then((user) => user.update(updates))
-      .then(getPlain)
-      .catch(console.error);
-  }
-
-  static async softDelete(id: User['id']): Promise<User> {
-    return this.update(id, { isDeleted: true });
   }
 }
 
-export type IUserModel = typeof UserModel;
+export const userModel = new UserModel(User, true);

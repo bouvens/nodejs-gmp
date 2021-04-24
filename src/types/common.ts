@@ -1,1 +1,7 @@
-export type Includes<T, U extends T> = U;
+export interface IBasicItem {
+  id: string;
+}
+
+export interface IServiceProps {
+  isDeleted?: boolean;
+}

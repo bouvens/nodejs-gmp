@@ -1,8 +1,8 @@
-import { v4 as uuid } from 'uuid';
 import { ENUM, STRING, UUIDV4 } from 'sequelize';
-import { Group, permissionList, OpenGroupProps } from '../types';
+import { IGroup, permissionList, OpenGroupProps } from '../types';
 import { sequelize } from '../data-access/postgresql';
-import { getPlain } from './common';
+import { getPlainAndFiltered } from './common';
+import { CrudModel } from './crud';
 
 const Group = sequelize.define(
   'group',
@@ -17,35 +17,15 @@ const Group = sequelize.define(
   },
 );
 
-export class GroupModel {
-  static async add({ name, permissions }: OpenGroupProps): Promise<Group['id']> {
-    const id = uuid();
-    await Group.create({ id, name, permissions });
-    return id;
-  }
-
-  static async findById(id: Group['id']): Promise<Group> {
-    return Group.findOne({ where: { id } }).then(getPlain).catch(console.error);
-  }
-
-  static async findAll(): Promise<Group[] | void> {
-    return Group.findAll({
-      order: ['name'],
-    })
-      .then((users) => users.map(getPlain))
+export class GroupModel extends CrudModel<OpenGroupProps> {
+  async findAll(): Promise<IGroup[] | void> {
+    return this.sequelizeModel
+      .findAll({
+        order: ['name'],
+      })
+      .then((users) => users.map(getPlainAndFiltered))
       .catch(console.error);
-  }
-
-  static async update(id: Group['id'], updates: Partial<Group>): Promise<Group> {
-    return Group.findOne({ where: { id } })
-      .then((user) => user.update(updates))
-      .then(getPlain)
-      .catch(console.error);
-  }
-
-  static async hardDelete(id: Group['id']): Promise<number> {
-    return Group.destroy({ where: { id } });
   }
 }
 
-export type IGroupModel = typeof GroupModel;
+export const groupModel = new GroupModel(Group);

@@ -1,2 +1,2 @@
-export { User, OpenUserProps } from './user';
-export { Group, Permission, permissionList, OpenGroupProps } from './group';
+export { IUser, OpenUserProps } from './user';
+export { IGroup, Permission, permissionList, OpenGroupProps } from './group';

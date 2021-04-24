@@ -1,13 +1,9 @@
-import { Includes } from './common';
+import { IBasicItem } from './common';
 
-export type User = {
-  id: string;
+export interface OpenUserProps {
   login: string;
   password: string;
   age: number;
-  isDeleted: boolean;
-};
+}
 
-type ServiceProps = Includes<keyof User, 'id' | 'isDeleted'>;
-
-export type OpenUserProps = Omit<User, ServiceProps>;
+export type IUser = OpenUserProps & IBasicItem;

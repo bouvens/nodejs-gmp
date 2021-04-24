@@ -1,27 +1,10 @@
-import { Group, OpenGroupProps } from '../types';
-import { IGroupModel } from '../models/group';
+import { IGroup, OpenGroupProps } from '../types';
+import { GroupModel } from '../models/group';
+import CrudService from './crud';
 
-export default class GroupService {
-  constructor(private GroupModel: IGroupModel) {}
-
-  async create({ name, permissions }: OpenGroupProps): Promise<Group['id']> {
-    return this.GroupModel.add({ name, permissions });
-  }
-
-  async getAll(): Promise<Group[]> {
-    const groups = await this.GroupModel.findAll();
+export default class GroupService extends CrudService<OpenGroupProps, GroupModel> {
+  async getAll(): Promise<IGroup[]> {
+    const groups = await this.model.findAll();
     return groups || [];
-  }
-
-  async getById(id: Group['id']): Promise<null | Group> {
-    return this.GroupModel.findById(id);
-  }
-
-  async update(id: Group['id'], updates: OpenGroupProps): Promise<Group> {
-    return this.GroupModel.update(id, updates);
-  }
-
-  async delete(id: Group['id']): Promise<number> {
-    return this.GroupModel.hardDelete(id);
   }
 }
