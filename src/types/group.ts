@@ -1,4 +1,4 @@
-import { Includes } from './common';
+import { IBasicItem } from './common';
 
 export enum Permission {
   READ = 'READ',
@@ -10,12 +10,9 @@ export enum Permission {
 
 export const permissionList: string[] = Object.values(Permission);
 
-export type Group = {
-  id: string;
+export interface OpenGroupProps {
   name: string;
   permissions: Permission[];
-};
+}
 
-type ServiceProps = Includes<keyof Group, 'id'>;
-
-export type OpenGroupProps = Omit<Group, ServiceProps>;
+export type IGroup = OpenGroupProps & IBasicItem;
