@@ -1,5 +1,6 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import config from './config';
+import logger from './logger';
 import routers from './routers';
 import { AppError, ErrorStatus } from './services/error';
 
@@ -11,7 +12,7 @@ const httpCodeByErrorStatus: Record<ErrorStatus, number> = {
 
 const app: Express = express();
 app.listen(config.port, () => {
-  console.log(`Server is running at ${config.port}`);
+  logger.info(`Server is running at ${config.port}`);
 });
 
 app.use(express.json());
@@ -29,7 +30,7 @@ app.use((err: Error | AppError, req: Request, res: Response, _next: NextFunction
       .status(httpCodeByErrorStatus[err.status])
       .json({ error: err.message, details: err.details });
   } else {
-    console.error(err.stack);
+    logger.error(err.stack);
     res.status(500).json({ error: 'Server error' });
   }
 });

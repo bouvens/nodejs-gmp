@@ -2,6 +2,7 @@ import { Model, ModelCtor } from 'sequelize';
 import { v4 as uuid } from 'uuid';
 import { IBasicItem, IServiceProps } from '../types/common';
 import { getPlainAndFiltered } from './common';
+import logger from '../logger';
 
 export class CrudModel<OpenItemProps> {
   constructor(
@@ -23,7 +24,9 @@ export class CrudModel<OpenItemProps> {
     return this.sequelizeModel
       .findOne({ where: { id, ...(this.withSoftDelete ? { isDeleted: false } : {}) } })
       .then(getPlainAndFiltered)
-      .catch(console.error);
+      .catch((e) => {
+        logger.error(e);
+      });
   }
 
   async update(
@@ -34,7 +37,9 @@ export class CrudModel<OpenItemProps> {
       .findOne({ where: { id, ...(this.withSoftDelete ? { isDeleted: false } : {}) } })
       .then((item) => item.update(updates))
       .then(getPlainAndFiltered)
-      .catch(console.error);
+      .catch((e) => {
+        logger.error(e);
+      });
   }
 
   async softDelete(id: IBasicItem['id']): Promise<(OpenItemProps & IBasicItem) | void> {

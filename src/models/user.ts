@@ -3,6 +3,7 @@ import { OpenUserProps, IUser } from '../types';
 import { sequelize } from '../data-access/postgresql';
 import { getPlainAndFiltered } from './common';
 import { CrudModel } from './crud';
+import logger from '../logger';
 
 const User = sequelize.define(
   'user',
@@ -28,7 +29,9 @@ export class UserModel extends CrudModel<OpenUserProps> {
         order: ['login'],
       })
       .then((users) => users.map(getPlainAndFiltered))
-      .catch(console.error);
+      .catch((e) => {
+        logger.error(e);
+      });
   }
 }
 

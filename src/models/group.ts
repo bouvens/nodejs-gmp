@@ -3,6 +3,7 @@ import { IGroup, permissionList, OpenGroupProps } from '../types';
 import { sequelize } from '../data-access/postgresql';
 import { getPlainAndFiltered } from './common';
 import { CrudModel } from './crud';
+import logger from '../logger';
 
 const Group = sequelize.define(
   'group',
@@ -24,7 +25,9 @@ export class GroupModel extends CrudModel<OpenGroupProps> {
         order: ['name'],
       })
       .then((users) => users.map(getPlainAndFiltered))
-      .catch(console.error);
+      .catch((e) => {
+        logger.error(e);
+      });
   }
 }
 
