@@ -1,6 +1,7 @@
 import express, { RequestHandler, Router } from 'express';
 import { AppError, ErrorStatus } from '../../services/error';
 import CrudService from '../../services/crud';
+import { loggerMiddleware } from '../../logger';
 import { BodyValidatedRequest } from './validation/common';
 
 export function makeCrudRouter<
@@ -11,7 +12,7 @@ export function makeCrudRouter<
   const router = express.Router();
 
   // Create
-  router.post('/', validator, async (req: Request, res, next) => {
+  router.post('/', validator, loggerMiddleware, async (req: Request, res, next) => {
     try {
       const id = await service.create(req.body);
       res.status(201).set('Location', `${req.originalUrl}/${id}`).json({ id });
@@ -21,7 +22,7 @@ export function makeCrudRouter<
   });
 
   // Read
-  router.get('/:id', async (req, res, next) => {
+  router.get('/:id', loggerMiddleware, async (req, res, next) => {
     try {
       const { id } = req.params;
       const item = await service.getById(id);
@@ -37,7 +38,7 @@ export function makeCrudRouter<
   });
 
   // Update
-  router.put('/:id', validator, async (req: Request, res, next) => {
+  router.put('/:id', validator, loggerMiddleware, async (req: Request, res, next) => {
     try {
       const { id } = req.params;
       const item = await service.update(id, req.body);
@@ -48,7 +49,7 @@ export function makeCrudRouter<
   });
 
   // Delete
-  router.delete('/:id', async (req, res, next) => {
+  router.delete('/:id', loggerMiddleware, async (req, res, next) => {
     try {
       const { id } = req.params;
       if (await service.delete(id)) {

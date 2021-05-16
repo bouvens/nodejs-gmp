@@ -2,7 +2,6 @@ import { Model, ModelCtor } from 'sequelize';
 import { v4 as uuid } from 'uuid';
 import { IBasicItem, IServiceProps } from '../types/common';
 import { getPlainAndFiltered } from './common';
-import logger from '../logger';
 
 export class CrudModel<OpenItemProps> {
   constructor(
