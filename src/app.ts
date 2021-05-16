@@ -25,7 +25,7 @@ app.use(function (req, res, next) {
 app.use('/', routers);
 
 app.use((err: Error | AppError, req: Request, res: Response, _next: NextFunction) => {
-  if ('expose' in err && err.expose) {
+  if ('expose' in err) {
     res
       .status(httpCodeByErrorStatus[err.status])
       .json({ error: err.message, details: err.details });

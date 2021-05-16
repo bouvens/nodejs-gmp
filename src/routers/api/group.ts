@@ -1,7 +1,6 @@
 import GroupService from '../../services/group';
 import { groupModel } from '../../models/group';
 import { OpenGroupProps } from '../../types';
-import { AppError, ErrorStatus } from '../../services/error';
 import { loggerMiddleware } from '../../logger';
 import { addUsersToGroup, group, uuid } from './validation';
 import { makeCrudRouter } from './crud';
