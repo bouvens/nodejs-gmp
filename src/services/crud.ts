@@ -11,7 +11,7 @@ export default class CrudService<
     return this.model.add(props);
   }
 
-  async getById(id: IBasicItem['id']): Promise<void | (OpenItemProps & IBasicItem)> {
+  async getById(id: IBasicItem['id']): Promise<OpenItemProps & IBasicItem> {
     return this.model.find(id);
   }
 

@@ -3,7 +3,6 @@ import { OpenUserProps, IUser } from '../types';
 import { sequelize } from '../data-access/postgresql';
 import { getPlainAndFiltered } from './common';
 import { CrudModel } from './crud';
-import logger from '../logger';
 
 const User = sequelize.define(
   'user',
@@ -21,17 +20,14 @@ const User = sequelize.define(
 );
 
 export class UserModel extends CrudModel<OpenUserProps> {
-  async findByLogin(loginSubstring: string, limit: number): Promise<IUser[] | void> {
+  async findByLogin(loginSubstring: string, limit: number): Promise<IUser[]> {
     return this.sequelizeModel
       .findAll({
         where: { login: { [Op.like]: `%${loginSubstring}%` }, isDeleted: false },
         limit,
         order: ['login'],
       })
-      .then((users) => users.map(getPlainAndFiltered))
-      .catch((e) => {
-        logger.error(e);
-      });
+      .then((users) => users.map(getPlainAndFiltered));
   }
 }
 
