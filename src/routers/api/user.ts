@@ -1,3 +1,4 @@
+import asyncHandler from 'express-async-handler';
 import { RequestHandler } from 'express';
 import UserService from '../../services/user';
 import { userModel } from '../../models/user';
@@ -19,15 +20,11 @@ router.get(
   '/',
   validator,
   loggerMiddleware,
-  async (req: userAutosuggestion.ValidatedRequest, res, next) => {
-    try {
-      const { login, limit } = req.query;
-      const users = await userService.getAutoSuggest(login, limit);
-      res.json(users);
-    } catch (e) {
-      next(e);
-    }
-  },
+  asyncHandler(async (req: userAutosuggestion.ValidatedRequest, res) => {
+    const { login, limit } = req.query;
+    const users = await userService.getAutoSuggest(login, limit);
+    res.json(users);
+  }),
 );
 
 export default router;
