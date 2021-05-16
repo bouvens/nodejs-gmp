@@ -1,9 +1,10 @@
 import GroupService from '../../services/group';
 import { groupModel } from '../../models/group';
-import { addUsersToGroup, group } from './validation';
-import { makeCrudRouter } from './crud';
 import { OpenGroupProps } from '../../types';
 import { AppError, ErrorStatus } from '../../services/error';
+import { loggerMiddleware } from '../../logger';
+import { addUsersToGroup, group } from './validation';
+import { makeCrudRouter } from './crud';
 
 const groupService = new GroupService(groupModel);
 const router = makeCrudRouter<OpenGroupProps, GroupService, group.ValidatedRequest>(
@@ -12,7 +13,7 @@ const router = makeCrudRouter<OpenGroupProps, GroupService, group.ValidatedReque
 );
 
 // Read All
-router.get('/', async (req, res, next) => {
+router.get('/', loggerMiddleware, async (req, res, next) => {
   try {
     const groups = await groupService.getAll();
     res.json(groups);
@@ -25,6 +26,7 @@ router.get('/', async (req, res, next) => {
 router.put(
   '/:id/add-users',
   addUsersToGroup.validator,
+  loggerMiddleware,
   async (req: addUsersToGroup.ValidatedRequest, res, next) => {
     try {
       const { id } = req.params;
