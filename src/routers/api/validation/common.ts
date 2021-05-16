@@ -14,3 +14,9 @@ interface RequestSchema<S> extends ValidatedRequestSchema {
 }
 
 export type BodyValidatedRequest<S> = ValidatedRequest<RequestSchema<S>>;
+
+interface ParamsRequestSchema<S> extends ValidatedRequestSchema {
+  [ContainerTypes.Params]: Joi.extractType<S>;
+}
+
+export type ParamsValidatedRequest<S> = ValidatedRequest<ParamsRequestSchema<S>>;
