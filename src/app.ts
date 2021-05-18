@@ -24,13 +24,8 @@ app.use(function (req, res, next) {
 
 app.use('/', routers);
 
-app.use((err: Error | AppError, req: Request, res: Response, _next: NextFunction) => {
-  const {
-    method,
-    originalUrl,
-    query,
-    service: { params },
-  } = req;
+app.use((err: Error | AppError, req: Request, res: Response, next: NextFunction) => {
+  const { method, originalUrl, query } = req;
 
   if ('expose' in err && err.expose) {
     res
@@ -40,10 +35,14 @@ app.use((err: Error | AppError, req: Request, res: Response, _next: NextFunction
     const details = 'details' in err ? err.details : undefined;
     logger.error(err.stack, {
       details,
-      req: { method, originalUrl, params, query },
+      req: { method, originalUrl, params: res.locals.params, query },
     });
-    res.status(500).json({ error: 'Server error' });
+    next(err);
   }
+});
+
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
+  res.status(500).json({ error: 'Server error' });
 });
 
 process.on('uncaughtException', (err: string, origin: string) => {
