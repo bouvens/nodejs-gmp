@@ -32,7 +32,7 @@ if (process.env.NODE_ENV !== 'production') {
 export const loggerMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   const { method, originalUrl, params, query } = req;
   logger.http(method, { path: originalUrl, params, query });
-  req.service = { params };
+  res.locals.params = params;
   next();
 };
 
