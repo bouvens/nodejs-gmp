@@ -2,7 +2,7 @@ import express, { Express, NextFunction, Request, Response } from 'express';
 import config from './config';
 import logger from './logger';
 import routers from './routers';
-import { AppError, ErrorStatus } from './services/error';
+import { AppError, ErrorStatus } from './models/error';
 
 const httpCodeByErrorStatus: Record<ErrorStatus, number> = {
   [ErrorStatus.internal]: 500,
@@ -25,12 +25,31 @@ app.use(function (req, res, next) {
 app.use('/', routers);
 
 app.use((err: Error | AppError, req: Request, res: Response, _next: NextFunction) => {
+  const {
+    method,
+    originalUrl,
+    query,
+    service: { params },
+  } = req;
+
   if ('expose' in err && err.expose) {
     res
       .status(httpCodeByErrorStatus[err.status])
       .json({ error: err.message, details: err.details });
   } else {
-    logger.error(err.stack);
+    const details = 'details' in err ? err.details : undefined;
+    logger.error(err.stack, {
+      details,
+      req: { method, originalUrl, params, query },
+    });
     res.status(500).json({ error: 'Server error' });
   }
+});
+
+process.on('uncaughtException', (err: string, origin: string) => {
+  logger.error(err, { origin });
+});
+
+process.on('unhandledRejection', (err: Error) => {
+  logger.error(err.stack, { origin: 'unhandledRejection' });
 });

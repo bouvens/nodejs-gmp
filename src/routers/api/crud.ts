@@ -1,6 +1,6 @@
 import express, { RequestHandler, Router } from 'express';
 import asyncHandler from 'express-async-handler';
-import { AppError, ErrorStatus } from '../../services/error';
+import { AppError, ErrorStatus } from '../../models/error';
 import CrudService from '../../services/crud';
 import { loggerMiddleware } from '../../logger';
 import { BodyValidatedRequest } from './validation/common';
@@ -33,7 +33,7 @@ export function makeCrudRouter<
     '/:id',
     idValidator,
     loggerMiddleware,
-    asyncHandler(async (req, res, next) => {
+    asyncHandler(async (req: Request, res, next) => {
       const { id } = req.params;
       const item = await service.getById(id);
       if (item) {
@@ -63,7 +63,7 @@ export function makeCrudRouter<
     '/:id',
     idValidator,
     loggerMiddleware,
-    asyncHandler(async (req, res, next) => {
+    asyncHandler(async (req: Request, res, next) => {
       const { id } = req.params;
       if (await service.delete(id)) {
         res.json({ message: `Deleted successfully: ${id}` });
