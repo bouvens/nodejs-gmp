@@ -29,12 +29,10 @@ if (process.env.NODE_ENV !== 'production') {
   );
 }
 
-export const loggerMiddleware = (
-  { method, originalUrl, params, query }: Request,
-  res: Response,
-  next: NextFunction,
-): void => {
+export const loggerMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+  const { method, originalUrl, params, query } = req;
   logger.http(method, { path: originalUrl, params, query });
+  req.service = { params };
   next();
 };
 
