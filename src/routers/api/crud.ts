@@ -22,9 +22,10 @@ export function makeCrudRouter<
     '/',
     validator,
     loggerMiddleware,
-    asyncHandler(async (req: Request, res) => {
+    asyncHandler(async (req: Request, res, next) => {
       const id = await service.create(req.body);
       res.status(201).set('Location', `${req.originalUrl}/${id}`).json({ id });
+      next();
     }),
   );
 
@@ -51,10 +52,11 @@ export function makeCrudRouter<
     idValidator,
     validator,
     loggerMiddleware,
-    asyncHandler(async (req: Request, res) => {
+    asyncHandler(async (req: Request, res, next) => {
       const { id } = req.params;
       const item = await service.update(id, req.body);
       res.json(item);
+      next();
     }),
   );
 
@@ -67,6 +69,7 @@ export function makeCrudRouter<
       const { id } = req.params;
       if (await service.delete(id)) {
         res.json({ message: `Deleted successfully: ${id}` });
+        next();
       } else {
         next(new AppError("Can't delete", ErrorStatus.other));
       }
