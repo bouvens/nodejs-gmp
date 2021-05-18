@@ -16,9 +16,10 @@ const router = makeCrudRouter<OpenGroupProps, GroupService, group.ValidatedReque
 router.get(
   '/',
   loggerMiddleware,
-  asyncHandler(async (req: addUsersToGroup.ValidatedRequest, res) => {
+  asyncHandler(async (req: addUsersToGroup.ValidatedRequest, res, next) => {
     const groups = await groupService.getAll();
     res.json(groups);
+    next();
   }),
 );
 
@@ -28,11 +29,12 @@ router.post(
   uuid.validator,
   addUsersToGroup.validator,
   loggerMiddleware,
-  asyncHandler(async (req: addUsersToGroup.ValidatedRequest, res) => {
+  asyncHandler(async (req: addUsersToGroup.ValidatedRequest, res, next) => {
     const { id } = req.params;
     const { users } = req.body;
     await groupService.addUsersToGroup(id, users);
     res.json({ status: 'success' });
+    next();
   }),
 );
 

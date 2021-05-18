@@ -20,10 +20,11 @@ router.get(
   '/',
   validator,
   loggerMiddleware,
-  asyncHandler(async (req: userAutosuggestion.ValidatedRequest, res) => {
+  asyncHandler(async (req: userAutosuggestion.ValidatedRequest, res, next) => {
     const { login, limit } = req.query;
     const users = await userService.getAutoSuggest(login, limit);
     res.json(users);
+    next();
   }),
 );
 
