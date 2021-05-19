@@ -24,7 +24,7 @@ app.use(function (req, res, next) {
 
 app.use('/', routers);
 
-app.use((err: Error | AppError, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error | AppError, req: Request, res: Response, _next: NextFunction) => {
   const { method, originalUrl, query } = req;
   const { serviceMethod, params } = res.locals;
 
@@ -32,7 +32,6 @@ app.use((err: Error | AppError, req: Request, res: Response, next: NextFunction)
     res
       .status(httpCodeByErrorStatus[err.status])
       .json({ error: err.message, details: err.details });
-    next();
   } else {
     const details = 'details' in err ? err.details : undefined;
     logger.error(err.stack, {
@@ -41,7 +40,6 @@ app.use((err: Error | AppError, req: Request, res: Response, next: NextFunction)
       req: { method, originalUrl, params, query },
     });
     res.status(500).json({ error: 'Server error' });
-    next();
   }
 });
 
