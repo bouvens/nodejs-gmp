@@ -34,14 +34,14 @@ const NS_IN_MS = 1000000n;
 export const withLogger = (serviceMethod: string) => (
   routeHandler: RequestHandler,
 ): RequestHandler =>
-  function (req, res, next): void {
+  function (req, res, next): Promise<void> {
     const { params } = req;
     res.locals.params = params;
     res.locals.serviceMethod = serviceMethod;
 
     const start = process.hrtime.bigint();
 
-    new Promise((resolve) => routeHandler(req, res, resolve)).then((result) => {
+    function logging(result: unknown): void {
       const { method, originalUrl, query } = req;
       const end = process.hrtime.bigint();
       const time = (end - start) / NS_IN_MS;
@@ -55,7 +55,9 @@ export const withLogger = (serviceMethod: string) => (
         executionTimeUnit: 'ms',
       });
       next(result);
-    });
+    }
+
+    return Promise.resolve(routeHandler(req, res, logging)).catch(next);
   };
 
 export default logger;
