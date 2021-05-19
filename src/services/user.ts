@@ -9,10 +9,7 @@ export default class UserService extends CrudService<OpenUserProps, UserModel> {
       .findByLogin(loginSubstring, limit)
       .then((users) => users || [])
       .catch((e) => {
-        throw new InternalError(e.message, {
-          methodName: 'getAutoSuggest',
-          args: { loginSubstring, limit },
-        });
+        throw new InternalError(e.message, { args: { loginSubstring, limit } });
       });
   }
 }

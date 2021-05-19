@@ -10,19 +10,13 @@ export default class CrudService<
 
   async create(props: OpenItemProps): Promise<IBasicItem['id']> {
     return this.model.add(props).catch((e) => {
-      throw new InternalError(e.message, {
-        methodName: 'create',
-        args: { props },
-      });
+      throw new InternalError(e.message, { args: { props } });
     });
   }
 
   async getById(id: IBasicItem['id']): Promise<OpenItemProps & IBasicItem> {
     return this.model.find(id).catch((e) => {
-      throw new InternalError(e.message, {
-        methodName: 'getById',
-        args: { id },
-      });
+      throw new InternalError(e.message, { args: { id } });
     });
   }
 
@@ -31,19 +25,13 @@ export default class CrudService<
     updates: OpenItemProps,
   ): Promise<(OpenItemProps & IBasicItem) | void> {
     return this.model.update(id, updates).catch((e) => {
-      throw new InternalError(e.message, {
-        methodName: 'update',
-        args: { id, updates },
-      });
+      throw new InternalError(e.message, { args: { id, updates } });
     });
   }
 
   async delete(id: IBasicItem['id']): Promise<(OpenItemProps & IBasicItem) | void | number> {
     return this.model.delete(id).catch((e) => {
-      throw new InternalError(e.message, {
-        methodName: 'delete',
-        args: { id },
-      });
+      throw new InternalError(e.message, { args: { id } });
     });
   }
 }

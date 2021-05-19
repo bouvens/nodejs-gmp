@@ -26,16 +26,19 @@ app.use('/', routers);
 
 app.use((err: Error | AppError, req: Request, res: Response, next: NextFunction) => {
   const { method, originalUrl, query } = req;
+  const { serviceMethod, params } = res.locals;
 
   if ('expose' in err && err.expose) {
     res
       .status(httpCodeByErrorStatus[err.status])
       .json({ error: err.message, details: err.details });
+    next();
   } else {
     const details = 'details' in err ? err.details : undefined;
     logger.error(err.stack, {
+      serviceMethod,
       details,
-      req: { method, originalUrl, params: res.locals.params, query },
+      req: { method, originalUrl, params, query },
     });
     res.status(500).json({ error: 'Server error' });
     next();
