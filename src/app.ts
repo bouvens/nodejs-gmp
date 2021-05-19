@@ -37,12 +37,16 @@ app.use((err: Error | AppError, req: Request, res: Response, next: NextFunction)
       details,
       req: { method, originalUrl, params: res.locals.params, query },
     });
-    next(err);
+    res.status(500).json({ error: 'Server error' });
+    next();
   }
 });
 
 app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
-  res.status(500).json({ error: 'Server error' });
+  logger.error(err.stack);
+  if (!res.headersSent) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 process.on('uncaughtException', (err: string, origin: string) => {
