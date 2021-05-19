@@ -1,22 +1,21 @@
-import asyncHandler from 'express-async-handler';
 import GroupService from '../../services/group';
 import { groupModel } from '../../models/group';
 import { OpenGroupProps } from '../../types';
-import { loggerMiddleware } from '../../logger';
+import { withHandlers } from '../handlers';
 import { addUsersToGroup, group, uuid } from './validation';
 import { makeCrudRouter } from './crud';
 
 const groupService = new GroupService(groupModel);
 const router = makeCrudRouter<OpenGroupProps, GroupService, group.ValidatedRequest>(
   groupService,
+  'groupService',
   group.validator,
 );
 
 // Read All
 router.get(
   '/',
-  loggerMiddleware,
-  asyncHandler(async (req: addUsersToGroup.ValidatedRequest, res, next) => {
+  withHandlers('groupService.getAll')(async (req: addUsersToGroup.ValidatedRequest, res, next) => {
     const groups = await groupService.getAll();
     res.json(groups);
     next();
@@ -28,14 +27,15 @@ router.post(
   '/:id/add-users',
   uuid.validator,
   addUsersToGroup.validator,
-  loggerMiddleware,
-  asyncHandler(async (req: addUsersToGroup.ValidatedRequest, res, next) => {
-    const { id } = req.params;
-    const { users } = req.body;
-    await groupService.addUsersToGroup(id, users);
-    res.json({ status: 'success' });
-    next();
-  }),
+  withHandlers('groupService.addUsersToGroup')(
+    async (req: addUsersToGroup.ValidatedRequest, res, next) => {
+      const { id } = req.params;
+      const { users } = req.body;
+      await groupService.addUsersToGroup(id, users);
+      res.json({ status: 'success' });
+      next();
+    },
+  ),
 );
 
 export default router;

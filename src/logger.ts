@@ -1,5 +1,5 @@
 import winston, { format } from 'winston';
-import { NextFunction, Request, Response } from 'express';
+import { RequestHandler } from 'express';
 
 const { combine, timestamp, json, colorize, printf } = format;
 
@@ -29,11 +29,33 @@ if (process.env.NODE_ENV !== 'production') {
   );
 }
 
-export const loggerMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-  const { method, originalUrl, params, query } = req;
-  logger.http(method, { path: originalUrl, params, query });
-  res.locals.params = params;
-  next();
-};
+const NS_IN_MS = 1000000n;
+
+export const withLogger = (serviceMethod: string) => (
+  routeHandler: RequestHandler,
+): RequestHandler =>
+  function (req, res, next): void {
+    const { params } = req;
+    res.locals.params = params;
+    res.locals.serviceMethod = serviceMethod;
+
+    const start = process.hrtime.bigint();
+
+    new Promise((resolve) => routeHandler(req, res, resolve)).then((result) => {
+      const { method, originalUrl, query } = req;
+      const end = process.hrtime.bigint();
+      const time = (end - start) / NS_IN_MS;
+
+      logger.http(method, {
+        serviceMethod,
+        path: originalUrl,
+        params,
+        query,
+        executionTime: Number(time),
+        executionTimeUnit: 'ms',
+      });
+      next(result);
+    });
+  };
 
 export default logger;

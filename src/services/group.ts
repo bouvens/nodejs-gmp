@@ -11,10 +11,7 @@ export default class GroupService extends CrudService<OpenGroupProps, GroupModel
       .findAll()
       .then((groups) => groups || [])
       .catch((e) => {
-        throw new InternalError(e.message, {
-          methodName: 'getAll',
-          args: {},
-        });
+        throw new InternalError(e.message, { args: {} });
       });
   }
 
@@ -23,10 +20,7 @@ export default class GroupService extends CrudService<OpenGroupProps, GroupModel
       .addUsersToGroup(id, userIDs)
       .then((userGroups) => userGroups.length)
       .catch((e) => {
-        throw new InternalError(e.message, {
-          methodName: 'addUsersToGroup',
-          args: { id, userIDs },
-        });
+        throw new InternalError(e.message, { args: { id, userIDs } });
       });
   }
 }

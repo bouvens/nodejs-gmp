@@ -5,7 +5,6 @@ export enum ErrorStatus {
 }
 
 interface IDetails {
-  methodName: string;
   args: Record<string, unknown>;
 }
 
