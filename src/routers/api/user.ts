@@ -2,7 +2,7 @@ import { RequestHandler } from 'express';
 import UserService from '../../services/user';
 import { userModel } from '../../models/user';
 import { OpenUserProps } from '../../types';
-import { withHandlers } from '../handlers';
+import { withLoggerAndAsyncHandler } from '../../logger';
 import { user, userAutosuggestion } from './validation';
 import { makeCrudRouter } from './crud';
 
@@ -19,7 +19,7 @@ const validator: RequestHandler = userAutosuggestion.validator;
 router.get(
   '/',
   validator,
-  withHandlers('userService.getAutoSuggest')(
+  withLoggerAndAsyncHandler('userService.getAutoSuggest')(
     async (req: userAutosuggestion.ValidatedRequest, res, next) => {
       const { login, limit } = req.query;
       const users = await userService.getAutoSuggest(login, limit);
