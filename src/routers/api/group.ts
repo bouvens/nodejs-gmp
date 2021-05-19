@@ -1,7 +1,7 @@
 import GroupService from '../../services/group';
 import { groupModel } from '../../models/group';
 import { OpenGroupProps } from '../../types';
-import { withHandlers } from '../handlers';
+import { withLoggerAndAsyncHandler } from '../../logger';
 import { addUsersToGroup, group, uuid } from './validation';
 import { makeCrudRouter } from './crud';
 
@@ -15,11 +15,13 @@ const router = makeCrudRouter<OpenGroupProps, GroupService, group.ValidatedReque
 // Read All
 router.get(
   '/',
-  withHandlers('groupService.getAll')(async (req: addUsersToGroup.ValidatedRequest, res, next) => {
-    const groups = await groupService.getAll();
-    res.json(groups);
-    next();
-  }),
+  withLoggerAndAsyncHandler('groupService.getAll')(
+    async (req: addUsersToGroup.ValidatedRequest, res, next) => {
+      const groups = await groupService.getAll();
+      res.json(groups);
+      next();
+    },
+  ),
 );
 
 // Add users to a group
@@ -27,7 +29,7 @@ router.post(
   '/:id/add-users',
   uuid.validator,
   addUsersToGroup.validator,
-  withHandlers('groupService.addUsersToGroup')(
+  withLoggerAndAsyncHandler('groupService.addUsersToGroup')(
     async (req: addUsersToGroup.ValidatedRequest, res, next) => {
       const { id } = req.params;
       const { users } = req.body;
