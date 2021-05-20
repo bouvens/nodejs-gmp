@@ -1,11 +1,12 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import config from './config';
 import routers from './routers';
-import { AppError, ErrorStatus } from './services/ErrorService';
+import { AppError, ErrorStatus } from './services/error';
 
 const httpCodeByErrorStatus: Record<ErrorStatus, number> = {
   [ErrorStatus.internal]: 500,
   [ErrorStatus.notFound]: 404,
+  [ErrorStatus.other]: 400,
 };
 
 const app: Express = express();
