@@ -20,15 +20,14 @@ const User = sequelize.define(
 );
 
 export class UserModel extends CrudModel<OpenUserProps> {
-  async findByLogin(loginSubstring: string, limit: number): Promise<IUser[] | void> {
+  async findByLogin(loginSubstring: string, limit: number): Promise<IUser[]> {
     return this.sequelizeModel
       .findAll({
         where: { login: { [Op.like]: `%${loginSubstring}%` }, isDeleted: false },
         limit,
         order: ['login'],
       })
-      .then((users) => users.map(getPlainAndFiltered))
-      .catch(console.error);
+      .then((users) => users.map(getPlainAndFiltered));
   }
 }
 

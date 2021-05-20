@@ -1,28 +1,38 @@
 import express, { RequestHandler, Router } from 'express';
-import { AppError, ErrorStatus } from '../../services/error';
+import { AppError, ErrorStatus } from '../../models/error';
 import CrudService from '../../services/crud';
+import { withLoggerAndAsyncHandler } from '../../logger';
 import { BodyValidatedRequest } from './validation/common';
+import { uuid } from './validation';
 
 export function makeCrudRouter<
   OpenItemProps,
   Service extends CrudService<OpenItemProps>,
   Request extends BodyValidatedRequest<unknown>
->(service: Service, validator: RequestHandler): Router {
+>(
+  service: Service,
+  serviceName: string,
+  validator: RequestHandler,
+  idValidator: RequestHandler = uuid.validator,
+): Router {
   const router = express.Router();
 
   // Create
-  router.post('/', validator, async (req: Request, res, next) => {
-    try {
+  router.post(
+    '/',
+    validator,
+    withLoggerAndAsyncHandler(`${serviceName}.create`)(async (req: Request, res, next) => {
       const id = await service.create(req.body);
       res.status(201).set('Location', `${req.originalUrl}/${id}`).json({ id });
-    } catch (e) {
-      next(e);
-    }
-  });
+      next();
+    }),
+  );
 
   // Read
-  router.get('/:id', async (req, res, next) => {
-    try {
+  router.get(
+    '/:id',
+    idValidator,
+    withLoggerAndAsyncHandler(`${serviceName}.getById`)(async (req: Request, res, next) => {
       const { id } = req.params;
       const item = await service.getById(id);
       if (item) {
@@ -31,35 +41,36 @@ export function makeCrudRouter<
       } else {
         next(new AppError(`No items with id: ${id}`, ErrorStatus.notFound));
       }
-    } catch (e) {
-      next(e);
-    }
-  });
+    }),
+  );
 
   // Update
-  router.put('/:id', validator, async (req: Request, res, next) => {
-    try {
+  router.put(
+    '/:id',
+    idValidator,
+    validator,
+    withLoggerAndAsyncHandler(`${serviceName}.update`)(async (req: Request, res, next) => {
       const { id } = req.params;
       const item = await service.update(id, req.body);
       res.json(item);
-    } catch (e) {
-      next(e);
-    }
-  });
+      next();
+    }),
+  );
 
   // Delete
-  router.delete('/:id', async (req, res, next) => {
-    try {
+  router.delete(
+    '/:id',
+    idValidator,
+    withLoggerAndAsyncHandler(`${serviceName}.delete`)(async (req: Request, res, next) => {
       const { id } = req.params;
       if (await service.delete(id)) {
         res.json({ message: `Deleted successfully: ${id}` });
+        next();
       } else {
         next(new AppError("Can't delete", ErrorStatus.other));
       }
-    } catch (e) {
-      next(e);
-    }
-  });
+    }),
+  );
 
   return router;
 }

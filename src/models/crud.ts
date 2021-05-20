@@ -11,19 +11,19 @@ export class CrudModel<OpenItemProps> {
 
   async add(props: OpenItemProps): Promise<IBasicItem['id']> {
     const id = uuid();
-    await this.sequelizeModel.create({
-      ...props,
-      id,
-      ...(this.withSoftDelete ? { isDeleted: false } : {}),
-    });
-    return id;
+    return this.sequelizeModel
+      .create({
+        ...props,
+        id,
+        ...(this.withSoftDelete ? { isDeleted: false } : {}),
+      })
+      .then(() => id);
   }
 
-  async find(id: IBasicItem['id']): Promise<(OpenItemProps & IBasicItem) | void> {
+  async find(id: IBasicItem['id']): Promise<OpenItemProps & IBasicItem> {
     return this.sequelizeModel
       .findOne({ where: { id, ...(this.withSoftDelete ? { isDeleted: false } : {}) } })
-      .then(getPlainAndFiltered)
-      .catch(console.error);
+      .then(getPlainAndFiltered);
   }
 
   async update(
@@ -33,8 +33,7 @@ export class CrudModel<OpenItemProps> {
     return this.sequelizeModel
       .findOne({ where: { id, ...(this.withSoftDelete ? { isDeleted: false } : {}) } })
       .then((item) => item.update(updates))
-      .then(getPlainAndFiltered)
-      .catch(console.error);
+      .then(getPlainAndFiltered);
   }
 
   async softDelete(id: IBasicItem['id']): Promise<(OpenItemProps & IBasicItem) | void> {
