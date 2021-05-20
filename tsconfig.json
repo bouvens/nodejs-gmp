@@ -15,10 +15,14 @@
     "noImplicitAny": true,
     "target": "es6",
     "lib": [
-      "es2016"
+      "es2019"
     ],
     "module": "commonjs",
     "baseUrl": "./src",
+    "typeRoots": [
+      "src/types",
+      "node_modules/@types"
+    ],
     "allowSyntheticDefaultImports": true
   },
   "exclude": [
