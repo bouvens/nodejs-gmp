@@ -1,1 +1,1 @@
-export { default as api } from './api/api';
+export { router as default } from './root';
