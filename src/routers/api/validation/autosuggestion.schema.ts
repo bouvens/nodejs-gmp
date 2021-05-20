@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { ContainerTypes, ValidatedRequest, ValidatedRequestSchema } from 'express-joi-validation';
 import { validator } from './common';
+import { RequestHandler } from 'express';
 
 const schema = Joi.object({
   login: Joi.string().required(),
@@ -12,6 +13,6 @@ interface RequestSchema extends ValidatedRequestSchema {
 }
 
 type QueryValidatedRequest = ValidatedRequest<RequestSchema>;
-const queryValidator = validator.query(schema);
+const queryValidator: RequestHandler = validator.query(schema);
 
 export { QueryValidatedRequest as ValidatedRequest, queryValidator as validator };
