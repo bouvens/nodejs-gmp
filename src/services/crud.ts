@@ -1,5 +1,6 @@
 import { CrudModel } from '../models/crud';
 import { IBasicItem } from '../types/common';
+import { InternalError } from '../models/error';
 
 export default class CrudService<
   OpenItemProps,
@@ -8,21 +9,29 @@ export default class CrudService<
   constructor(protected model: Model) {}
 
   async create(props: OpenItemProps): Promise<IBasicItem['id']> {
-    return this.model.add(props);
+    return this.model.add(props).catch((e) => {
+      throw new InternalError(e.message, { args: { props } });
+    });
   }
 
-  async getById(id: IBasicItem['id']): Promise<void | (OpenItemProps & IBasicItem)> {
-    return this.model.find(id);
+  async getById(id: IBasicItem['id']): Promise<OpenItemProps & IBasicItem> {
+    return this.model.find(id).catch((e) => {
+      throw new InternalError(e.message, { args: { id } });
+    });
   }
 
   async update(
     id: IBasicItem['id'],
     updates: OpenItemProps,
   ): Promise<(OpenItemProps & IBasicItem) | void> {
-    return this.model.update(id, updates);
+    return this.model.update(id, updates).catch((e) => {
+      throw new InternalError(e.message, { args: { id, updates } });
+    });
   }
 
   async delete(id: IBasicItem['id']): Promise<(OpenItemProps & IBasicItem) | void | number> {
-    return this.model.delete(id);
+    return this.model.delete(id).catch((e) => {
+      throw new InternalError(e.message, { args: { id } });
+    });
   }
 }

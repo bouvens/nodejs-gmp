@@ -23,8 +23,7 @@ export class GroupModel extends CrudModel<OpenGroupProps> {
       .findAll({
         order: ['name'],
       })
-      .then((users) => users.map(getPlainAndFiltered))
-      .catch(console.error);
+      .then((users) => users.map(getPlainAndFiltered));
   }
 }
 

@@ -1,16 +1,26 @@
-import { IGroup, OpenGroupProps } from '../types';
 import { GroupModel } from '../models/group';
-import CrudService from './crud';
-import { IBasicItem } from '../types/common';
 import { usersGroupModel } from '../models/users_groups';
+import { IGroup, OpenGroupProps } from '../types';
+import { IBasicItem } from '../types/common';
+import CrudService from './crud';
+import { InternalError } from '../models/error';
 
 export default class GroupService extends CrudService<OpenGroupProps, GroupModel> {
-  async getAll(): Promise<IGroup[]> {
-    const groups = await this.model.findAll();
-    return groups || [];
+  getAll(): Promise<IGroup[]> {
+    return this.model
+      .findAll()
+      .then((groups) => groups || [])
+      .catch((e) => {
+        throw new InternalError(e.message, { args: {} });
+      });
   }
 
-  async addUsersToGroup(id: IBasicItem['id'], userIDs: IBasicItem['id'][]): Promise<void | string> {
-    return await usersGroupModel.addUsersToGroup(id, userIDs);
+  addUsersToGroup(id: IBasicItem['id'], userIDs: IBasicItem['id'][]): Promise<number> {
+    return usersGroupModel
+      .addUsersToGroup(id, userIDs)
+      .then((userGroups) => userGroups.length)
+      .catch((e) => {
+        throw new InternalError(e.message, { args: { id, userIDs } });
+      });
   }
 }

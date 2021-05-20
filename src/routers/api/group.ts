@@ -1,44 +1,43 @@
 import GroupService from '../../services/group';
 import { groupModel } from '../../models/group';
-import { addUsersToGroup, group } from './validation';
-import { makeCrudRouter } from './crud';
 import { OpenGroupProps } from '../../types';
-import { AppError, ErrorStatus } from '../../services/error';
+import { withLoggerAndAsyncHandler } from '../../logger';
+import { addUsersToGroup, group, uuid } from './validation';
+import { makeCrudRouter } from './crud';
 
 const groupService = new GroupService(groupModel);
 const router = makeCrudRouter<OpenGroupProps, GroupService, group.ValidatedRequest>(
   groupService,
+  'groupService',
   group.validator,
 );
 
 // Read All
-router.get('/', async (req, res, next) => {
-  try {
-    const groups = await groupService.getAll();
-    res.json(groups);
-  } catch (e) {
-    next(e);
-  }
-});
+router.get(
+  '/',
+  withLoggerAndAsyncHandler('groupService.getAll')(
+    async (req: addUsersToGroup.ValidatedRequest, res, next) => {
+      const groups = await groupService.getAll();
+      res.json(groups);
+      next();
+    },
+  ),
+);
 
 // Add users to a group
-router.put(
+router.post(
   '/:id/add-users',
+  uuid.validator,
   addUsersToGroup.validator,
-  async (req: addUsersToGroup.ValidatedRequest, res, next) => {
-    try {
+  withLoggerAndAsyncHandler('groupService.addUsersToGroup')(
+    async (req: addUsersToGroup.ValidatedRequest, res, next) => {
       const { id } = req.params;
       const { users } = req.body;
-      const status = await groupService.addUsersToGroup(id, users);
-      if (status) {
-        next(new AppError(status, ErrorStatus.internal));
-        return;
-      }
+      await groupService.addUsersToGroup(id, users);
       res.json({ status: 'success' });
-    } catch (e) {
-      next(e);
-    }
-  },
+      next();
+    },
+  ),
 );
 
 export default router;
