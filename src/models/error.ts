@@ -1,3 +1,5 @@
+import { logTime } from '../logger';
+
 export enum ErrorStatus {
   internal,
   notFound,
@@ -10,14 +12,10 @@ interface IDetails {
 }
 
 export class AppError extends Error {
-  status: ErrorStatus;
   expose: boolean;
-  details?: IDetails;
 
-  constructor(message: string, status: ErrorStatus, details?: IDetails) {
+  constructor(message: string, public status: ErrorStatus, public details?: IDetails) {
     super(message);
-    this.status = status;
-    this.details = details;
     this.expose = status !== ErrorStatus.internal;
   }
 }
@@ -34,7 +32,7 @@ const makeInternalError = (methodName: string, args: IDetails['args']) => (
   throw new InternalError(e.message, { methodName, args });
 };
 
-export function wrapErrors<R>(
+export function wrapErrorsAndLog<R>(
   target: unknown,
   propertyKey: string,
   descriptor: PropertyDescriptor,
@@ -44,7 +42,11 @@ export function wrapErrors<R>(
   return {
     ...descriptor,
     value: function (...args: unknown[]): R {
-      return originalMethod.call(this, ...args).catch(makeInternalError(methodName, args));
+      const start = process.hrtime.bigint();
+      return originalMethod
+        .call(this, ...args)
+        .catch(makeInternalError(methodName, args))
+        .finally(logTime(start, methodName, args));
     },
   };
 }
