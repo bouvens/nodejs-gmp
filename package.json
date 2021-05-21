@@ -11,7 +11,7 @@
     "start:watch-debug": "nodemon --config nodemon-debug.json",
     "lint": "eslint \"src/**/*.{js,ts}\"",
     "lint:fix": "eslint \"src/**/*.{js,ts}\" --fix",
-    "tsc-check": "tsc --noEmit",
+    "tsc-check": "tsc --noEmit --skipLibCheck",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage"
