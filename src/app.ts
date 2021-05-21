@@ -26,7 +26,7 @@ app.use('/', routers);
 
 app.use((err: Error | AppError, req: Request, res: Response, _next: NextFunction) => {
   const { method, originalUrl, query } = req;
-  const { serviceMethod, params } = res.locals;
+  const { params } = res.locals;
 
   if ('expose' in err && err.expose) {
     res
@@ -35,9 +35,8 @@ app.use((err: Error | AppError, req: Request, res: Response, _next: NextFunction
   } else {
     const details = 'details' in err ? err.details : undefined;
     logger.error(err.stack, {
-      serviceMethod,
-      details,
       req: { method, originalUrl, params, query },
+      details,
     });
     res.status(500).json({ error: 'Server error' });
   }

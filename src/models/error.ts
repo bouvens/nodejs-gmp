@@ -5,7 +5,8 @@ export enum ErrorStatus {
 }
 
 interface IDetails {
-  args: Record<string, unknown>;
+  methodName: string;
+  args: unknown[];
 }
 
 export class AppError extends Error {
@@ -21,8 +22,29 @@ export class AppError extends Error {
   }
 }
 
-export class InternalError extends AppError {
+class InternalError extends AppError {
   constructor(message: string, details: IDetails) {
     super(message, ErrorStatus.internal, details);
   }
+}
+
+const makeInternalError = (methodName: string, args: IDetails['args']) => (
+  e: Error,
+): InternalError => {
+  throw new InternalError(e.message, { methodName, args });
+};
+
+export function wrapErrors<R>(
+  target: unknown,
+  propertyKey: string,
+  descriptor: PropertyDescriptor,
+): PropertyDescriptor {
+  const methodName = `${target.constructor.name}.${propertyKey}`;
+  const originalMethod = descriptor.value;
+  return {
+    ...descriptor,
+    value: function (...args: unknown[]): R {
+      return originalMethod.call(this, ...args).catch(makeInternalError(methodName, args));
+    },
+  };
 }

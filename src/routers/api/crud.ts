@@ -21,7 +21,7 @@ export function makeCrudRouter<
   router.post(
     '/',
     validator,
-    withLoggerAndAsyncHandler(`${serviceName}.create`)(async (req: Request, res, next) => {
+    withLoggerAndAsyncHandler(async (req: Request, res, next) => {
       const id = await service.create(req.body);
       res.status(201).set('Location', `${req.originalUrl}/${id}`).json({ id });
       next();
@@ -32,7 +32,7 @@ export function makeCrudRouter<
   router.get(
     '/:id',
     idValidator,
-    withLoggerAndAsyncHandler(`${serviceName}.getById`)(async (req: Request, res, next) => {
+    withLoggerAndAsyncHandler(async (req: Request, res, next) => {
       const { id } = req.params;
       const item = await service.getById(id);
       if (item) {
@@ -49,7 +49,7 @@ export function makeCrudRouter<
     '/:id',
     idValidator,
     validator,
-    withLoggerAndAsyncHandler(`${serviceName}.update`)(async (req: Request, res, next) => {
+    withLoggerAndAsyncHandler(async (req: Request, res, next) => {
       const { id } = req.params;
       const item = await service.update(id, req.body);
       res.json(item);
@@ -61,7 +61,7 @@ export function makeCrudRouter<
   router.delete(
     '/:id',
     idValidator,
-    withLoggerAndAsyncHandler(`${serviceName}.delete`)(async (req: Request, res, next) => {
+    withLoggerAndAsyncHandler(async (req: Request, res, next) => {
       const { id } = req.params;
       if (await service.delete(id)) {
         res.json({ message: `Deleted successfully: ${id}` });

@@ -31,13 +31,10 @@ if (process.env.NODE_ENV !== 'production') {
 
 const NS_IN_MS = 1000000n;
 
-export const withLoggerAndAsyncHandler = (serviceMethod: string) => (
-  routeHandler: RequestHandler,
-): RequestHandler =>
+export const withLoggerAndAsyncHandler = (routeHandler: RequestHandler): RequestHandler =>
   function (req, res, next): Promise<void> {
     const { params } = req;
     res.locals.params = params;
-    res.locals.serviceMethod = serviceMethod;
 
     const start = process.hrtime.bigint();
 
@@ -47,7 +44,6 @@ export const withLoggerAndAsyncHandler = (serviceMethod: string) => (
       const time = (end - start) / NS_IN_MS;
 
       logger.http(method, {
-        serviceMethod,
         path: originalUrl,
         params,
         query,
