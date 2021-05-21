@@ -19,14 +19,12 @@ const validator: RequestHandler = userAutosuggestion.validator;
 router.get(
   '/',
   validator,
-  withLoggerAndAsyncHandler('userService.getAutoSuggest')(
-    async (req: userAutosuggestion.ValidatedRequest, res, next) => {
-      const { login, limit } = req.query;
-      const users = await userService.getAutoSuggest(login, limit);
-      res.json(users);
-      next();
-    },
-  ),
+  withLoggerAndAsyncHandler(async (req: userAutosuggestion.ValidatedRequest, res, next) => {
+    const { login, limit } = req.query;
+    const users = await userService.getAutoSuggest(login, limit);
+    res.json(users);
+    next();
+  }),
 );
 
 export default router;
