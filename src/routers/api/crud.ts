@@ -1,7 +1,7 @@
 import express, { RequestHandler, Router } from 'express';
 import { AppError, ErrorStatus } from '../../models/error';
 import CrudService from '../../services/crud';
-import { withLoggerAndAsyncHandler } from '../../logger';
+import { withLogAndCatch } from '../../logger';
 import { BodyValidatedRequest } from './validation/common';
 import { uuid } from './validation';
 
@@ -21,7 +21,7 @@ export function makeCrudRouter<
   router.post(
     '/',
     validator,
-    withLoggerAndAsyncHandler(async (req: Request, res, next) => {
+    withLogAndCatch(async (req: Request, res, next) => {
       const id = await service.create(req.body);
       res.status(201).set('Location', `${req.originalUrl}/${id}`).json({ id });
       next();
@@ -32,7 +32,7 @@ export function makeCrudRouter<
   router.get(
     '/:id',
     idValidator,
-    withLoggerAndAsyncHandler(async (req: Request, res, next) => {
+    withLogAndCatch(async (req: Request, res, next) => {
       const { id } = req.params;
       const item = await service.getById(id);
       if (item) {
@@ -49,7 +49,7 @@ export function makeCrudRouter<
     '/:id',
     idValidator,
     validator,
-    withLoggerAndAsyncHandler(async (req: Request, res, next) => {
+    withLogAndCatch(async (req: Request, res, next) => {
       const { id } = req.params;
       const item = await service.update(id, req.body);
       res.json(item);
@@ -61,7 +61,7 @@ export function makeCrudRouter<
   router.delete(
     '/:id',
     idValidator,
-    withLoggerAndAsyncHandler(async (req: Request, res, next) => {
+    withLogAndCatch(async (req: Request, res, next) => {
       const { id } = req.params;
       if (await service.delete(id)) {
         res.json({ message: `Deleted successfully: ${id}` });

@@ -31,7 +31,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const NS_IN_MS = 1000000n;
 
-export const withLoggerAndAsyncHandler = (routeHandler: RequestHandler): RequestHandler =>
+export const withLogAndCatch = (routeHandler: RequestHandler): RequestHandler =>
   function (req, res, next): Promise<void> {
     const { params } = req;
     res.locals.params = params;
