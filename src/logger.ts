@@ -33,27 +33,16 @@ const NS_IN_MS = 1000000n;
 
 export const withLogAndCatch = (routeHandler: RequestHandler): RequestHandler =>
   function (req, res, next): Promise<void> {
-    const { params } = req;
+    const { params, method, originalUrl, query } = req;
     res.locals.params = params;
-
-    const start = process.hrtime.bigint();
-
-    function logging(result: unknown): void {
-      const { method, originalUrl, query } = req;
-      const end = process.hrtime.bigint();
-      const time = (end - start) / NS_IN_MS;
-
-      logger.http(method, {
-        path: originalUrl,
-        params,
-        query,
-        executionTime: Number(time),
-        executionTimeUnit: 'ms',
-      });
-      next(result);
-    }
-
-    return Promise.resolve(routeHandler(req, res, logging)).catch(next);
+    logger.http(method, { path: originalUrl, params, query });
+    return Promise.resolve(routeHandler(req, res, next)).catch(next);
   };
+
+export const logTime = (start: bigint, methodName: string, args: unknown[]) => (): void => {
+  const end = process.hrtime.bigint();
+  const executionTime = Number((end - start) / NS_IN_MS);
+  logger.info(`Called ${methodName}`, { args, executionTime, executionTimeUnit: 'ms' });
+};
 
 export default logger;
