@@ -7,6 +7,7 @@ import { AppError, ErrorStatus } from './models/error';
 
 const httpCodeByErrorStatus: Record<ErrorStatus, number> = {
   [ErrorStatus.other]: 400,
+  [ErrorStatus.unauthorized]: 401,
   [ErrorStatus.forbidden]: 403,
   [ErrorStatus.notFound]: 404,
   [ErrorStatus.internal]: 500,
