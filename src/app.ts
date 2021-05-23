@@ -1,4 +1,5 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
+import cors from 'cors';
 import config from './config';
 import logger from './logger';
 import routers from './routers';
@@ -14,6 +15,8 @@ const app: Express = express();
 app.listen(config.port, () => {
   logger.info(`Server is running at ${config.port}`);
 });
+
+app.use(cors());
 
 app.use(express.json());
 
