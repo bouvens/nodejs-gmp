@@ -7,8 +7,6 @@ import AuthService from '../../services/auth';
 import { userModel } from '../../models/user';
 import { login } from './validation';
 
-const SECONDS_IN_HOUR = 60 * 60;
-
 const authService = new AuthService(userModel);
 const router = express.Router();
 
@@ -19,7 +17,7 @@ router.post(
     const { login, password } = req.body;
     const sub = await authService.auth(login, password);
     if (sub) {
-      const token = jwt.sign({ sub }, config.jwtSecret, { expiresIn: SECONDS_IN_HOUR });
+      const token = jwt.sign({ sub }, config.jwtSecret, { expiresIn: '1h' });
       res.send(token);
       next();
     } else {
