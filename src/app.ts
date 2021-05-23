@@ -6,9 +6,10 @@ import routers from './routers';
 import { AppError, ErrorStatus } from './models/error';
 
 const httpCodeByErrorStatus: Record<ErrorStatus, number> = {
-  [ErrorStatus.internal]: 500,
-  [ErrorStatus.notFound]: 404,
   [ErrorStatus.other]: 400,
+  [ErrorStatus.forbidden]: 403,
+  [ErrorStatus.notFound]: 404,
+  [ErrorStatus.internal]: 500,
 };
 
 const app: Express = express();
