@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import config from '../../config';
 import { withLogAndCatch } from '../../logger';
@@ -27,5 +27,21 @@ router.post(
     }
   }),
 );
+
+export const withTokenCheck: RequestHandler = (req, res, next) => {
+  const bearerHeader = req.headers['authorization'];
+  if (!bearerHeader) {
+    next(new AppError('No token provided', ErrorStatus.unauthorized));
+    return;
+  }
+  const token = bearerHeader.split(' ')[1];
+  jwt.verify(token, config.jwtSecret, (err, _decoded) => {
+    if (err) {
+      next(new AppError('Failed to authenticate token', ErrorStatus.forbidden));
+      return;
+    }
+    next();
+  });
+};
 
 export default router;

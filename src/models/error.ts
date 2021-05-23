@@ -3,6 +3,7 @@ import { logTime } from '../logger';
 export enum ErrorStatus {
   internal,
   forbidden,
+  unauthorized,
   notFound,
   other,
 }
