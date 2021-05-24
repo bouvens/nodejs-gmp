@@ -1,7 +1,5 @@
 import express, { RequestHandler } from 'express';
-import jwt from 'jsonwebtoken';
-import config from '../../config';
-import { withLogAndCatch } from '../../logger';
+import logger, { withLogAndCatch } from '../../logger';
 import { AppError, ErrorStatus } from '../../models/error';
 import AuthService from '../../services/auth';
 import { userModel } from '../../models/user';
@@ -15,31 +13,34 @@ router.post(
   login.validator,
   withLogAndCatch(async (req: login.ValidatedRequest, res, next) => {
     const { login, password } = req.body;
-    const sub = await authService.auth(login, password);
-    if (sub) {
-      const token = jwt.sign({ sub }, config.jwtSecret, { expiresIn: '1h' });
+    const token = await authService.login(login, password);
+    if (token) {
       res.send(token);
       next();
     } else {
-      next(new AppError('Wrong login or password', ErrorStatus.forbidden));
+      logger.warn('Wrong login or password', { login });
+      next(new AppError('Failed to log in', ErrorStatus.forbidden));
     }
   }),
 );
 
-export const withTokenCheck: RequestHandler = (req, res, next) => {
+export const withTokenCheck: RequestHandler = async (req, res, next) => {
   const bearerHeader = req.headers['authorization'];
+  const { method, originalUrl, query } = req;
   if (!bearerHeader) {
+    logger.warn('No token', { method, originalUrl, query });
     next(new AppError('No token provided', ErrorStatus.unauthorized));
     return;
   }
   const token = bearerHeader.split(' ')[1];
-  jwt.verify(token, config.jwtSecret, (err, _decoded) => {
-    if (err) {
-      next(new AppError('Failed to authenticate token', ErrorStatus.forbidden));
-      return;
-    }
+  try {
+    const decoded = await authService.authenticate(token);
+    res.locals.author = decoded.sub;
     next();
-  });
+  } catch (error) {
+    logger.warn('Wrong authenticate token', { method, originalUrl, query, error });
+    next(new AppError('Failed to authenticate token', ErrorStatus.forbidden));
+  }
 };
 
 export default router;
