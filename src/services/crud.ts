@@ -1,6 +1,6 @@
 import { CrudModel } from '../models/crud';
 import { IBasicItem } from '../types/common';
-import { wrapErrorsAndLog } from '../models/error';
+import { wrapErrorsAndLog, wrapErrorsAndLogSafely } from '../models/error';
 
 export default class CrudService<
   OpenItemProps,
@@ -8,7 +8,7 @@ export default class CrudService<
 > {
   constructor(protected model: Model) {}
 
-  @wrapErrorsAndLog
+  @wrapErrorsAndLogSafely
   async create(props: OpenItemProps): Promise<IBasicItem['id']> {
     return this.model.add(props);
   }
@@ -18,7 +18,7 @@ export default class CrudService<
     return this.model.find(id);
   }
 
-  @wrapErrorsAndLog
+  @wrapErrorsAndLogSafely
   async update(
     id: IBasicItem['id'],
     updates: OpenItemProps,
