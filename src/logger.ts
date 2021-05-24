@@ -34,8 +34,9 @@ const NS_IN_MS = 1000000n;
 export const withLogAndCatch = (routeHandler: RequestHandler): RequestHandler =>
   function (req, res, next): Promise<void> {
     const { params, method, originalUrl, query } = req;
+    const { author } = res.locals;
     res.locals.params = params;
-    logger.http(method, { path: originalUrl, params, query });
+    logger.http(method, { author, path: originalUrl, params, query });
     return Promise.resolve(routeHandler(req, res, next)).catch(next);
   };
 
