@@ -1,7 +1,7 @@
 import GroupService from '../../services/group';
 import { groupModel } from '../../models/group';
 import { OpenGroupProps } from '../../types';
-import { withLogAndCatch } from '../../logger';
+import { withLogAndCatch } from '../../services/logger';
 import { addUsersToGroup, group, uuid } from './validation';
 import { makeCrudRouter } from './crud';
 

@@ -1,9 +1,9 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import config from './config';
-import logger from './logger';
-import routers from './routers';
-import { AppError, ErrorStatus } from './models/error';
+import logger from './services/logger';
+import routers from './controllers';
+import { AppError, ErrorStatus } from './services/error';
 
 const httpCodeByErrorStatus: Record<ErrorStatus, number> = {
   [ErrorStatus.other]: 400,

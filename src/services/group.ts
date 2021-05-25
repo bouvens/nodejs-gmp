@@ -3,7 +3,7 @@ import { usersGroupModel } from '../models/users_groups';
 import { IGroup, OpenGroupProps } from '../types';
 import { IBasicItem } from '../types/common';
 import CrudService from './crud';
-import { wrapErrorsAndLog } from '../models/error';
+import { wrapErrorsAndLog } from './error';
 
 export default class GroupService extends CrudService<OpenGroupProps, GroupModel> {
   @wrapErrorsAndLog

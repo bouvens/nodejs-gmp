@@ -1,4 +1,4 @@
-import { logTime } from '../logger';
+import { logTime } from './logger';
 
 export enum ErrorStatus {
   internal,
