@@ -1,6 +1,6 @@
 import { OpenUserProps, IUser } from '../types';
 import { UserModel } from '../models/user';
-import { wrapErrorsAndLog } from '../models/error';
+import { wrapErrorsAndLog } from './error';
 import CrudService from './crud';
 
 export default class UserService extends CrudService<OpenUserProps, UserModel> {

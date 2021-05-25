@@ -1,6 +1,6 @@
 import express, { RequestHandler } from 'express';
-import logger, { withLogAndCatch } from '../../logger';
-import { AppError, ErrorStatus } from '../../models/error';
+import logger, { withLogAndCatch } from '../../services/logger';
+import { AppError, ErrorStatus } from '../../services/error';
 import AuthService from '../../services/auth';
 import { userModel } from '../../models/user';
 import { login } from './validation';

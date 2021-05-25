@@ -1,7 +1,7 @@
 import UserService from '../../services/user';
 import { userModel } from '../../models/user';
 import { OpenUserProps } from '../../types';
-import { withLogAndCatch } from '../../logger';
+import { withLogAndCatch } from '../../services/logger';
 import { user, userAutosuggestion } from './validation';
 import { makeCrudRouter } from './crud';
 

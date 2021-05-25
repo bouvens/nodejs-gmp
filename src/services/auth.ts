@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { UserModel } from '../models/user';
-import { wrapErrorsAndLogSafely } from '../models/error';
 import config from '../config';
 import { IPayload } from '../types/auth';
+import { wrapErrorsAndLogSafely } from './error';
 
 export default class AuthService {
   constructor(protected model: UserModel) {}
