@@ -1,1 +1,7 @@
+.github
+coverage
+dist
+logs
+node_modules
 tests
+.env
