@@ -2,9 +2,11 @@ import express, { RequestHandler } from 'express';
 import logger, { withLogAndCatch } from '../../services/logger';
 import { AppError, ErrorStatus } from '../../services/error';
 import AuthService from '../../services/auth';
-import { userModel } from '../../models/user';
+import { UserModel } from '../../models/user';
+import { UserData } from '../../data-access/user';
 import { login } from './validation';
 
+const userModel = new UserModel(UserData, true);
 const authService = new AuthService(userModel);
 const router = express.Router();
 
