@@ -8,7 +8,7 @@ import { uuid } from './validation';
 export function makeCrudRouter<
   OpenItemProps,
   Service extends CrudService<OpenItemProps>,
-  Request extends BodyValidatedRequest<unknown>
+  Request extends BodyValidatedRequest<unknown>,
 >(
   service: Service,
   serviceName: string,
@@ -32,7 +32,7 @@ export function makeCrudRouter<
   router.get(
     '/:id',
     idValidator,
-    withLogAndCatch(async (req: Request, res, next) => {
+    withLogAndCatch(async (req: uuid.ValidatedRequest, res, next) => {
       const { id } = req.params;
       const item = await service.getById(id);
       if (item) {
@@ -49,7 +49,7 @@ export function makeCrudRouter<
     '/:id',
     idValidator,
     validator,
-    withLogAndCatch(async (req: Request, res, next) => {
+    withLogAndCatch(async (req: uuid.ValidatedRequest, res, next) => {
       const { id } = req.params;
       const item = await service.update(id, req.body);
       res.json(item);
@@ -61,7 +61,7 @@ export function makeCrudRouter<
   router.delete(
     '/:id',
     idValidator,
-    withLogAndCatch(async (req: Request, res, next) => {
+    withLogAndCatch(async (req: uuid.ValidatedRequest, res, next) => {
       const { id } = req.params;
       if (await service.delete(id)) {
         res.json({ message: `Deleted successfully: ${id}` });

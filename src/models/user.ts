@@ -11,7 +11,7 @@ export class UserModel extends CrudModel<OpenUserProps> {
       .then(getPlainAndFiltered);
   }
 
-  async autosuggest(loginSubstring: string, limit: number): Promise<IUser[]> {
+  async autoSuggest(loginSubstring: string, limit: number): Promise<IUser[]> {
     return this.sequelizeModel
       .findAll({
         where: { login: { [Op.like]: `%${loginSubstring}%` }, isDeleted: false },
