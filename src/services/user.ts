@@ -6,7 +6,7 @@ import CrudService from './crud';
 export default class UserService extends CrudService<OpenUserProps, UserModel> {
   @wrapErrorsAndLog
   async getAutoSuggest(loginSubstring: string, limit: number): Promise<IUser[]> {
-    const users = await this.model.autosuggest(loginSubstring, limit);
+    const users = await this.model.autoSuggest(loginSubstring, limit);
     return users || [];
   }
 }

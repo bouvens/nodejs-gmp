@@ -31,13 +31,13 @@ if (process.env.NODE_ENV !== 'production') {
 
 const NS_IN_MS = 1000000n;
 
-export const withLogAndCatch = (routeHandler: RequestHandler): RequestHandler =>
+export const withLogAndCatch = (requestHandler: RequestHandler): RequestHandler =>
   function (req, res, next): Promise<void> {
     const { params, method, originalUrl, query } = req;
     const { author } = res.locals;
     res.locals.params = params;
     logger.http(method, { author, path: originalUrl, params, query });
-    return Promise.resolve(routeHandler(req, res, next)).catch(next);
+    return Promise.resolve(requestHandler(req, res, next)).catch(next);
   };
 
 export const logTime = (start: bigint, methodName: string, args: unknown[]) => (): void => {

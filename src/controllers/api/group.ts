@@ -15,7 +15,7 @@ const router = makeCrudRouter<OpenGroupProps, GroupService, group.ValidatedReque
 // Read All
 router.get(
   '/',
-  withLogAndCatch(async (req: addUsersToGroup.ValidatedRequest, res, next) => {
+  withLogAndCatch(async (req, res, next) => {
     const groups = await groupService.getAll();
     res.json(groups);
     next();
