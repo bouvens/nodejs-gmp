@@ -28,11 +28,11 @@ class InternalError extends AppError {
   }
 }
 
-const makeInternalError = (methodName: string, args: IDetails['args']) => (
-  e: Error,
-): InternalError => {
-  throw new InternalError(e.message, { methodName, args });
-};
+const makeInternalError =
+  (methodName: string, args: IDetails['args']) =>
+  (e: Error): InternalError => {
+    throw new InternalError(e.message, { methodName, args });
+  };
 
 function makeWrapperAndLogger<R>(withArgs = false) {
   return (

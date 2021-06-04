@@ -4,7 +4,7 @@ import { wrapErrorsAndLog, wrapErrorsAndLogSafely } from './error';
 
 export default class CrudService<
   OpenItemProps,
-  Model extends CrudModel<OpenItemProps> = CrudModel<OpenItemProps>
+  Model extends CrudModel<OpenItemProps> = CrudModel<OpenItemProps>,
 > {
   constructor(protected model: Model) {}
 
