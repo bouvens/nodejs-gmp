@@ -1,4 +1,4 @@
-import { CrudModel } from '../models/crud';
+import CrudModel from '../models/crud';
 import { IBasicItem } from '../types/common';
 import { wrapErrorsAndLog, wrapErrorsAndLogSafely } from './error';
 

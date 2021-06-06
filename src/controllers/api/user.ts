@@ -1,5 +1,5 @@
 import UserService from '../../services/user';
-import { UserModel } from '../../models/user';
+import UserModel from '../../models/user';
 import { OpenUserProps } from '../../types';
 import { withLogAndCatch } from '../../services/logger';
 import { UserData } from '../../data-access/user';

@@ -42,7 +42,7 @@ describe('Group controller', () => {
   describe('read all', () => {
     beforeEach(() => {
       req = getMockReq();
-      groupService.getAll = jest.fn().mockReturnValue(groups);
+      groupService.getAll = jest.fn().mockResolvedValue(groups);
       readAll(groupService)(req, res, next);
     });
 
@@ -59,7 +59,7 @@ describe('Group controller', () => {
 
     beforeEach(() => {
       users = ['7d3b5688-dd09-4521-8d67-c24d17086482', 'a7ffd3ac-b59b-44ac-b06a-1fc829651252'];
-      groupService.addUsersToGroup = jest.fn().mockReturnValue(users);
+      groupService.addUsersToGroup = jest.fn().mockResolvedValue(users);
       req = getMockReq({ params: { id: groupId }, body: { users } });
       addUsersToGroup(groupService)(req, res, next);
     });
