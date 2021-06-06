@@ -1,10 +1,10 @@
 import { Op } from 'sequelize';
 import { IUser, OpenUserProps } from '../types';
 import { getPlainAndFiltered } from './common';
-import { CrudModel } from './crud';
+import CrudModel from './crud';
 import { IBasicItem } from '../types/common';
 
-export class UserModel extends CrudModel<OpenUserProps> {
+export default class UserModel extends CrudModel<OpenUserProps> {
   async findByLogin(login: string): Promise<OpenUserProps & IBasicItem> {
     return this.sequelizeModel
       .findOne({ where: { login, isDeleted: false } })

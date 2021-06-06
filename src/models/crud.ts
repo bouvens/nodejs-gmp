@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { IBasicItem, IServiceProps } from '../types/common';
 import { getPlainAndFiltered } from './common';
 
-export class CrudModel<OpenItemProps> {
+export default class CrudModel<OpenItemProps> {
   constructor(
     protected sequelizeModel: ModelCtor<Model<OpenItemProps & IBasicItem & IServiceProps>>,
     private withSoftDelete = false,

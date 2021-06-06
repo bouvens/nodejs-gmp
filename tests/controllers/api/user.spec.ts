@@ -1,8 +1,8 @@
-import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { getMockReq, getMockRes } from '@jest-mock/express';
-import UserService from '../../../src/services/user';
 import { autosuggestion } from '../../../src/controllers/api/user/autosuggestion';
-import { UserModel } from 'models/user';
+import UserService from '../../../src/services/user';
+import UserModel from 'models/user';
 import { IUser } from 'types';
 
 describe('User controller', () => {
@@ -34,7 +34,7 @@ describe('User controller', () => {
       req = getMockReq({ query: { login, limit } });
       const dummyUserModel = <UserModel>{};
       userService = new UserService(dummyUserModel);
-      userService.getAutoSuggest = jest.fn().mockReturnValue(users);
+      userService.getAutoSuggest = jest.fn().mockResolvedValue(users);
       autosuggestion(userService)(req, res, next);
     });
 

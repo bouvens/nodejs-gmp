@@ -1,7 +1,7 @@
 import { OpenUserProps, IUser } from '../types';
-import { UserModel } from '../models/user';
-import { wrapErrorsAndLog } from './error';
 import CrudService from './crud';
+import UserModel from '../models/user';
+import { wrapErrorsAndLog } from './error';
 
 export default class UserService extends CrudService<OpenUserProps, UserModel> {
   constructor(protected model: UserModel) {
