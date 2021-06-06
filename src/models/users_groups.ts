@@ -1,28 +1,21 @@
-import { UUIDV4, Model } from 'sequelize';
+import { Model, ModelCtor } from 'sequelize';
 import { sequelize } from '../data-access/postgresql';
 import { IBasicItem } from '../types/common';
-import { IGroup } from '../types';
+import { OpenUsersGroupsProps } from '../types/users_groups';
 
-const UsersGroups = sequelize.define(
-  'users_groups',
-  {
-    user: { type: UUIDV4, allowNull: false },
-    group: { type: UUIDV4, primaryKey: true },
-  },
-  {
-    timestamps: false,
-    tableName: 'users_groups',
-  },
-);
+export default class UsersGroupModel {
+  constructor(protected sequelizeModel: ModelCtor<Model<OpenUsersGroupsProps>>) {}
 
-export class UsersGroupModel {
-  addUsersToGroup(id: IBasicItem['id'], userIDs: IBasicItem['id'][]): Promise<Model<IGroup>[]> {
+  addUsersToGroup(
+    id: IBasicItem['id'],
+    userIDs: IBasicItem['id'][],
+  ): Promise<Model<OpenUsersGroupsProps>[]> {
     return sequelize.transaction(async (t) => {
       const relations = [];
 
       for (const userID of userIDs) {
         relations.push(
-          await UsersGroups.create(
+          await this.sequelizeModel.create(
             {
               group: id,
               user: userID,
@@ -36,5 +29,3 @@ export class UsersGroupModel {
     });
   }
 }
-
-export const usersGroupModel = new UsersGroupModel();
