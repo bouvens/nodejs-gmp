@@ -5,7 +5,7 @@ import { withLogAndCatch } from '../../services/logger';
 import { UserData } from '../../data-access/user';
 import { user, userAutosuggestion } from './validation';
 import { makeCrudRouter } from './crud';
-import { makeAutosuggestion } from './user/autosuggestion';
+import { autosuggestion } from './user/autosuggestion';
 
 const userModel = new UserModel(UserData, true);
 const userService = new UserService(userModel);
@@ -16,7 +16,6 @@ const router = makeCrudRouter<OpenUserProps, UserService, user.ValidatedRequest>
 );
 
 // Autosuggestion
-const handleAutosuggestion = makeAutosuggestion(userService);
-router.get('/', userAutosuggestion.validator, withLogAndCatch(handleAutosuggestion));
+router.get('/', userAutosuggestion.validator, withLogAndCatch(autosuggestion(userService)));
 
 export default router;
