@@ -18,14 +18,11 @@ app.listen(config.port, () => {
   logger.info(`Server is running at ${config.port}`);
 });
 
+app.disable('x-powered-by');
+
 app.use(cors());
 
 app.use(express.json());
-
-app.use(function (req, res, next) {
-  res.setHeader('X-Powered-By', 'gmp');
-  next();
-});
 
 app.use('/', routers);
 
