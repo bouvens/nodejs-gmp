@@ -1,28 +1,67 @@
-import express, { RequestHandler } from 'express';
+import express, { NextFunction, RequestHandler, Response } from 'express';
 import logger, { withLogAndCatch } from '../../services/logger';
 import { AppError, ErrorStatus } from '../../services/error';
 import AuthService from '../../services/auth';
 import UserModel from '../../models/user';
 import { UserData } from '../../data-access/user';
+import AuthModel from '../../models/auth';
+import { AuthData } from '../../data-access/auth';
+import config from '../../config';
+import { ITokenPair } from '../../types';
 import { login } from './validation';
 
+const REFRESH_COOKIE = 'refresh_token';
+
 const userModel = new UserModel(UserData, true);
-const authService = new AuthService(userModel);
+const authModel = new AuthModel(AuthData);
+const authService = new AuthService(userModel, authModel);
 const router = express.Router();
+
+function sendNewTokens(res: Response, next: NextFunction, tokens: ITokenPair): void {
+  const { refresh, access } = tokens;
+  res.cookie(REFRESH_COOKIE, refresh, {
+    expires: new Date(Date.now() + config.refreshTokenExp),
+    secure: false, // should be true with https
+    httpOnly: true,
+  });
+  res.send(access);
+  next();
+}
 
 router.post(
   '/',
   login.validator,
   withLogAndCatch(async (req: login.ValidatedRequest, res, next) => {
     const { login, password } = req.body;
-    const token = await authService.login(login, password);
-    if (token) {
-      res.send(token);
-      next();
+    const tokens = await authService.login(login, password, req.ip);
+    if (tokens) {
+      sendNewTokens(res, next, tokens);
     } else {
       logger.warn('Wrong login or password', { login });
       next(new AppError('Failed to log in', ErrorStatus.forbidden));
     }
+  }),
+);
+
+router.post(
+  '/refresh',
+  withLogAndCatch(async (req, res, next) => {
+    const refreshToken = req.cookies[REFRESH_COOKIE];
+    const ipAddress = req.ip;
+    const newTokens = refreshToken && (await authService.refresh(refreshToken, ipAddress));
+
+    if (!refreshToken || !newTokens) {
+      logger.warn('Token refreshing failed', {
+        ipAddress,
+        refreshToken: !!refreshToken,
+        newTokens: !!newTokens,
+      });
+      next(new AppError('Please log in', ErrorStatus.forbidden));
+      return;
+    }
+
+    sendNewTokens(res, next, newTokens);
+    next();
   }),
 );
 

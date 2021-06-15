@@ -1,5 +1,6 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import config from './config';
 import logger from './services/logger';
 import routers from './controllers';
@@ -21,6 +22,7 @@ app.listen(config.port, () => {
 app.disable('x-powered-by');
 
 app.use(cors());
+app.use(cookieParser());
 
 app.use(express.json());
 
