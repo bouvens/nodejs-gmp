@@ -1,5 +1,5 @@
-import { sequelize } from './postgresql';
 import { UUIDV4 } from 'sequelize';
+import { sequelize } from './postgresql';
 
 export const UsersGroupsData = sequelize.define(
   'users_groups',
