@@ -6,13 +6,11 @@ import config from '../config';
 import { ITokenPair, ITokenPayload, IUser } from '../types';
 import { wrapErrorsAndLogSafely } from './error';
 
-const REFRESH_TOKEN_SIZE = 42;
-
 export default class AuthService {
   constructor(protected userModel: UserModel, protected authModel: AuthModel) {}
 
   private static makeRefreshToken(): ITokenPair['refresh'] {
-    return crypto.randomBytes(REFRESH_TOKEN_SIZE).toString('hex');
+    return crypto.randomBytes(config.refreshTokenSize).toString('hex');
   }
 
   private static makeAccessToken(userId: IUser['id']): ITokenPair['access'] {
