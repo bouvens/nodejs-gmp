@@ -8,6 +8,7 @@ export default {
   port: process.env.PORT || 3000,
   dbUri: process.env.DB_URI,
   jwtSecret: process.env.JWT_SECRET,
+  hashingSalt: process.env.HASHING_SALT,
   accessTokenExp: process.env.ACCESS_TOKEN_EXP || '25m',
   refreshTokenExp: Number(process.env.REFRESH_TOKEN_EXP) || HALF_OF_YEAR,
 };

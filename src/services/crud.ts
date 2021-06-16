@@ -8,7 +8,7 @@ export default class CrudService<
 > {
   constructor(protected model: Model) {}
 
-  @wrapErrorsAndLogSafely
+  @wrapErrorsAndLog
   async create(props: OpenItemProps): Promise<IBasicItem['id']> {
     return this.model.add(props);
   }

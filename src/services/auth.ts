@@ -11,6 +11,10 @@ const REFRESH_TOKEN_SIZE = 42;
 export default class AuthService {
   constructor(protected userModel: UserModel, protected authModel: AuthModel) {}
 
+  static hashPassword(password: string): string {
+    return crypto.createHash('sha256').update(`${password}${config.hashingSalt}`).digest('hex');
+  }
+
   private static makeRefreshToken(): ITokenPair['refresh'] {
     return crypto.randomBytes(REFRESH_TOKEN_SIZE).toString('hex');
   }
@@ -23,7 +27,7 @@ export default class AuthService {
   @wrapErrorsAndLogSafely
   async login(login: string, password: string, ip: string): Promise<ITokenPair> {
     const user = await this.userModel.findByLogin(login);
-    if (!user || user.password !== password) {
+    if (!user || user.password !== AuthService.hashPassword(password)) {
       return null;
     }
 
