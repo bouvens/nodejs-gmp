@@ -15,7 +15,7 @@
     "alwaysStrict": true,
     "noImplicitAny": true,
     "strictNullChecks": false,
-    "strictPropertyInitialization": true,
+    "strictPropertyInitialization": false,
     "noImplicitThis": true,
     "strictBindCallApply": true,
     "target": "es2020",
