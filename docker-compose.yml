@@ -1,12 +1,7 @@
 version: '3.8'
 services:
-  typescript-backend-template:
+  gmp12:
     image: node:14-alpine
-    environment:
-      - PORT=${PORT}
-    ports:
-      - ${PORT}:${PORT}
-    working_dir: /opt/typescript-backend-template
+    build: .
     volumes:
-      - ".:/opt/typescript-backend-template"
-    command: npm run start:watch
+      - "$PWD/out:/usr/src/app/out"

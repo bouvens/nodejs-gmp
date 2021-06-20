@@ -5,3 +5,10 @@ To run and get a result in /out directory
 docker build . -t <image name>
 docker run --name <container name> -d -v $PWD/out:/usr/src/app/out <image name>
 ```
+
+or
+
+```bash
+docker-compose build
+docker-compose up
+```
