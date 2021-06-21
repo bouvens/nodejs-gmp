@@ -8,3 +8,10 @@ Execute the next commands:
 docker build . -t <your username>/nodejs-gmp
 docker run --env-file <path to the project>/.env -p <desired local port>:3000 -d <your username>/nodejs-gmp
 ```
+
+or
+
+```bash
+docker-compose build
+docker-compose up
+```
