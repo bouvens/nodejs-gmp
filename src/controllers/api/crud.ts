@@ -1,7 +1,7 @@
 import express, { RequestHandler, Router } from 'express';
-import { AppError, ErrorStatus } from '../../models/error';
+import { AppError, ErrorStatus } from '../../services/error';
 import CrudService from '../../services/crud';
-import { withLogAndCatch } from '../../logger';
+import { withLogAndCatch } from '../../services/logger';
 import { BodyValidatedRequest } from './validation/common';
 import { uuid } from './validation';
 

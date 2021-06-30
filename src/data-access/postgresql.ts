@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize';
 import config from '../config';
-import logger from '../logger';
+import logger from '../services/logger';
 
 export const sequelize = new Sequelize(config.dbUri, {
   dialect: 'postgres',

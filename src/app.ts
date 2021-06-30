@@ -1,19 +1,24 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
+import cors from 'cors';
 import config from './config';
-import logger from './logger';
-import routers from './routers';
-import { AppError, ErrorStatus } from './models/error';
+import logger from './services/logger';
+import routers from './controllers';
+import { AppError, ErrorStatus } from './services/error';
 
 const httpCodeByErrorStatus: Record<ErrorStatus, number> = {
-  [ErrorStatus.internal]: 500,
-  [ErrorStatus.notFound]: 404,
   [ErrorStatus.other]: 400,
+  [ErrorStatus.unauthorized]: 401,
+  [ErrorStatus.forbidden]: 403,
+  [ErrorStatus.notFound]: 404,
+  [ErrorStatus.internal]: 500,
 };
 
 const app: Express = express();
 app.listen(config.port, () => {
   logger.info(`Server is running at ${config.port}`);
 });
+
+app.use(cors());
 
 app.use(express.json());
 
