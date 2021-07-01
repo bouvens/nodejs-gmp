@@ -419,7 +419,7 @@ declare module 'joi' {
       R,
       T1 extends mappedSchema,
       T2 extends mappedSchema,
-      T extends { then: T1; otherwise: T2 }
+      T extends { then: T1; otherwise: T2 },
     >(
       ref: R,
       defs: T,

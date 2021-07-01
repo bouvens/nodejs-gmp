@@ -1,10 +1,13 @@
 import UserService from '../../services/user';
-import { userModel } from '../../models/user';
+import UserModel from '../../models/user';
 import { OpenUserProps } from '../../types';
 import { withLogAndCatch } from '../../services/logger';
+import { UserData } from '../../data-access/user';
 import { user, userAutosuggestion } from './validation';
 import { makeCrudRouter } from './crud';
+import { autosuggestion } from './user/autosuggestion';
 
+const userModel = new UserModel(UserData, true);
 const userService = new UserService(userModel);
 const router = makeCrudRouter<OpenUserProps, UserService, user.ValidatedRequest>(
   userService,
@@ -13,15 +16,6 @@ const router = makeCrudRouter<OpenUserProps, UserService, user.ValidatedRequest>
 );
 
 // Autosuggestion
-router.get(
-  '/',
-  userAutosuggestion.validator,
-  withLogAndCatch(async (req: userAutosuggestion.ValidatedRequest, res, next) => {
-    const { login, limit } = req.query;
-    const users = await userService.getAutoSuggest(login, limit);
-    res.json(users);
-    next();
-  }),
-);
+router.get('/', userAutosuggestion.validator, withLogAndCatch(autosuggestion(userService)));
 
 export default router;

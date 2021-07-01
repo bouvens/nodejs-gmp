@@ -1,33 +1,17 @@
-import { BOOLEAN, NUMBER, STRING, UUIDV4, Op } from 'sequelize';
-import { OpenUserProps, IUser } from '../types';
-import { sequelize } from '../data-access/postgresql';
+import { Op } from 'sequelize';
+import { IUser, OpenUserProps } from '../types';
 import { getPlainAndFiltered } from './common';
-import { CrudModel } from './crud';
+import CrudModel from './crud';
 import { IBasicItem } from '../types/common';
 
-const User = sequelize.define(
-  'user',
-  {
-    id: { type: UUIDV4, primaryKey: true },
-    login: { type: STRING, allowNull: false },
-    password: { type: STRING, allowNull: false },
-    age: { type: NUMBER, allowNull: false },
-    isDeleted: { type: BOOLEAN, allowNull: false },
-  },
-  {
-    timestamps: false,
-    tableName: 'users',
-  },
-);
-
-export class UserModel extends CrudModel<OpenUserProps> {
+export default class UserModel extends CrudModel<OpenUserProps> {
   async findByLogin(login: string): Promise<OpenUserProps & IBasicItem> {
     return this.sequelizeModel
       .findOne({ where: { login, isDeleted: false } })
       .then(getPlainAndFiltered);
   }
 
-  async autosuggest(loginSubstring: string, limit: number): Promise<IUser[]> {
+  async autoSuggest(loginSubstring: string, limit: number): Promise<IUser[]> {
     return this.sequelizeModel
       .findAll({
         where: { login: { [Op.like]: `%${loginSubstring}%` }, isDeleted: false },
@@ -37,5 +21,3 @@ export class UserModel extends CrudModel<OpenUserProps> {
       .then((users) => users.map(getPlainAndFiltered));
   }
 }
-
-export const userModel = new UserModel(User, true);

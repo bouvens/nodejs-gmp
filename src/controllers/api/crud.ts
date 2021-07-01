@@ -1,14 +1,17 @@
 import express, { RequestHandler, Router } from 'express';
-import { AppError, ErrorStatus } from '../../services/error';
 import CrudService from '../../services/crud';
 import { withLogAndCatch } from '../../services/logger';
 import { BodyValidatedRequest } from './validation/common';
 import { uuid } from './validation';
+import { create } from './crud/create';
+import { read } from './crud/read';
+import { update } from './crud/update';
+import { deleteHandler } from './crud/delete';
 
 export function makeCrudRouter<
   OpenItemProps,
   Service extends CrudService<OpenItemProps>,
-  Request extends BodyValidatedRequest<unknown>
+  Request extends BodyValidatedRequest<unknown>,
 >(
   service: Service,
   serviceName: string,
@@ -18,59 +21,16 @@ export function makeCrudRouter<
   const router = express.Router();
 
   // Create
-  router.post(
-    '/',
-    validator,
-    withLogAndCatch(async (req: Request, res, next) => {
-      const id = await service.create(req.body);
-      res.status(201).set('Location', `${req.originalUrl}/${id}`).json({ id });
-      next();
-    }),
-  );
+  router.post('/', validator, withLogAndCatch(create(service)));
 
   // Read
-  router.get(
-    '/:id',
-    idValidator,
-    withLogAndCatch(async (req: Request, res, next) => {
-      const { id } = req.params;
-      const item = await service.getById(id);
-      if (item) {
-        res.json(item);
-        next();
-      } else {
-        next(new AppError(`No items with id: ${id}`, ErrorStatus.notFound));
-      }
-    }),
-  );
+  router.get('/:id', idValidator, withLogAndCatch(read(service)));
 
   // Update
-  router.put(
-    '/:id',
-    idValidator,
-    validator,
-    withLogAndCatch(async (req: Request, res, next) => {
-      const { id } = req.params;
-      const item = await service.update(id, req.body);
-      res.json(item);
-      next();
-    }),
-  );
+  router.put('/:id', idValidator, validator, withLogAndCatch(update(service)));
 
   // Delete
-  router.delete(
-    '/:id',
-    idValidator,
-    withLogAndCatch(async (req: Request, res, next) => {
-      const { id } = req.params;
-      if (await service.delete(id)) {
-        res.json({ message: `Deleted successfully: ${id}` });
-        next();
-      } else {
-        next(new AppError("Can't delete", ErrorStatus.other));
-      }
-    }),
-  );
+  router.delete('/:id', idValidator, withLogAndCatch(deleteHandler(service)));
 
   return router;
 }
