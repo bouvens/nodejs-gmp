@@ -1,6 +1,24 @@
-# Node.js Global Mentoring Program
+# Node.js Sample Project
 
-Homeworks
+With Express, TypeScript, Docker, logging, error handling, and 3-layer architecture
+
+## Bulletproof Architecture
+
+Source: https://softwareontheroad.com/ideal-nodejs-project-structure/
+
+## How To Run
+
+```bash
+git clone https://github.com/bouvens/nodejs-gmp.git
+cd nodejs-gmp
+npm install
+```
+
+Create a `.env` file with at least one parameter: `DB_URI` for connecting to PostgreSQL.
+
+```bash
+npm run start
+```
 
 ## Docker
 Execute the next commands:
