@@ -29,7 +29,7 @@ if (process.env.NODE_ENV !== 'production') {
   );
 }
 
-const NS_IN_MS = 1000000n;
+const NS_IN_MS = 1_000_000n;
 
 export const withLogAndCatch = (requestHandler: RequestHandler): RequestHandler =>
   function (req, res, next): Promise<void> {

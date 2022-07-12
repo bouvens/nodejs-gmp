@@ -3,7 +3,7 @@ import { defaults as tsjPreset } from 'ts-jest/presets';
 module.exports = {
   transform: tsjPreset.transform,
   roots: ['<rootDir>/tests/', '<rootDir>/src/'],
-  testTimeout: 30000,
+  testTimeout: 30_000,
   rootDir: '..',
   testRegex: '.spec.ts$',
   setupFiles: ['./tests/jest.settings.ts'],
