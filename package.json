@@ -1,7 +1,7 @@
 {
   "name": "node.js-learning",
   "version": "0.0.0",
-  "description": "A simple Node.js learning project",
+  "description": "A simple Node.js educational project",
   "main": "index.js",
   "scripts": {
     "prebuild": "rimraf dist",
