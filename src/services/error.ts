@@ -34,32 +34,53 @@ const makeInternalError =
     throw new InternalError(e.message, { methodName, args });
   };
 
+type Func = typeof Function.constructor;
+type PatchedFunc<R> = (...args: unknown[]) => Promise<R | InternalError> | R;
+
 function makeWrapperAndLogger<R>(withArgs = false) {
-  return (
+  return function decorator(
     target: unknown,
     propertyKey: string,
-    descriptor: PropertyDescriptor,
-  ): PropertyDescriptor => {
-    const methodName = `${target.constructor.name}.${propertyKey}`;
-    const originalMethod = descriptor.value;
+    descriptor?: PropertyDescriptor,
+    // TS requires type any for decorator return
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): any {
+    let fn: Func;
+    let patchedFn: PatchedFunc<R>;
+
+    if (descriptor) {
+      fn = descriptor.value;
+    }
+
     return {
-      ...descriptor,
-      value: function (...args: unknown[]): R {
-        const safeArgs = withArgs ? args : [{ safe: true }];
-        const start = process.hrtime.bigint();
-        const internalError = makeInternalError(methodName, safeArgs);
-        const end = logTime(start, methodName, safeArgs);
-        let result;
-        try {
-          result = originalMethod.call(this, ...args);
-        } catch (e) {
-          internalError(e);
+      configurable: true,
+      enumerable: false,
+      get(): PatchedFunc<R> {
+        if (!patchedFn) {
+          patchedFn = (...args): ReturnType<PatchedFunc<R>> => {
+            const methodName = `${target.constructor.name}.${propertyKey}`;
+            const safeArgs = withArgs ? args : [{ safe: true }];
+            const start = process.hrtime.bigint();
+            const internalError = makeInternalError(methodName, safeArgs);
+            const end = logTime(start, methodName, safeArgs);
+            let result;
+            try {
+              result = fn.call(this, ...args);
+            } catch (e) {
+              internalError(e);
+            }
+            if (result?.catch) {
+              return result.catch(internalError).finally(end);
+            }
+            end();
+            return result;
+          };
         }
-        if (result.catch) {
-          return result.catch(internalError).finally(end);
-        }
-        end();
-        return result;
+        return patchedFn;
+      },
+      set(newFn: Func): void {
+        patchedFn = undefined;
+        fn = newFn;
       },
     };
   };
